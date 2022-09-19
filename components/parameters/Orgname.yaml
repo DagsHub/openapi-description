@@ -1,0 +1,7 @@
+name: orgname
+example: DAGsHub-Official
+in: path
+description: A DagsHub organization name
+required: true
+schema:
+  type: string

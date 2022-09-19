@@ -1,0 +1,34 @@
+type: object
+properties:
+  clone_addr:
+    type: string
+    description: Remote Git address (HTTP/HTTPS URL or local path)
+  auth_username:
+    type: string
+    description: Authorization username
+  auth_password:
+    type: string
+    description: Authorization password
+  user_id:
+    type: integer
+    description: User ID who takes ownership of this repository
+  repo_name:
+    type: string
+    example: repo-name
+    description: Name of the repository
+  mirror:
+    type: boolean
+    description: Repository will be a mirror (connected repository).
+    default: false
+  private:
+    type: boolean
+    description: Repository will be private.
+    default: false
+  description:
+    type: string
+    description: Description of the repository
+    example: "..."
+required:
+  - clone_addr
+  - user_id
+

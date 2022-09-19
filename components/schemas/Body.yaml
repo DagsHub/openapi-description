@@ -1,0 +1,3 @@
+type: string
+description: The contents of the issue.
+example: This issue was made from the API using [DagsHub docs](https://dagshub.com/docs/api)

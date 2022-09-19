@@ -1,0 +1,6 @@
+name: index
+in: path
+description: the index of an issue or a pull request
+required: true
+schema:
+  type: integer

@@ -1,0 +1,7 @@
+name: repo
+example: dagshub-docs
+in: path
+description: name of the repository
+required: true
+schema:
+  type: string

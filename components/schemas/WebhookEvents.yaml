@@ -1,0 +1,16 @@
+type: array
+description: Determines what events the hook is triggered format.
+items:
+  schema:
+    type: string
+default: 
+  - push
+example:
+  - create
+  - delete
+  - fork
+  - push
+  - issues
+  - issue_comment
+  - pull_request
+  - release

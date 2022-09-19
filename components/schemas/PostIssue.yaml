@@ -1,0 +1,14 @@
+type: object
+properties:
+  title:
+    $ref: './Title.yaml'
+  body:
+    $ref: './Body.yaml'
+  assignee:
+    $ref: './Assignee.yaml'
+  milestone:
+    $ref: './Milestone.yaml'
+  labels:
+    $ref: './Labels.yaml'
+  closed:
+    $ref: './Closed.yaml'

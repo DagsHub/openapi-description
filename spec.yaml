@@ -1,0 +1,736 @@
+# OpenAPI documentation for DagsHub
+openapi: 3.0.3
+info:
+  title: DagsHub API
+  version: 1.0.1
+  description: |
+    The api docs are made with SwaggerUI using the OpenAPI 3 specification.
+   
+servers:
+  - url: http://dagshub.com/api/v1/
+security:
+  - basicAuth: []
+  - tokenAuth: []
+paths:
+  /repos/{owner}/{repo}/issues:
+    parameters:
+      - $ref: './components/parameters/Owner.yaml'
+      - $ref: './components/parameters/Repository.yaml'
+    get:
+      tags:
+        - Issues
+      summary: List issues for a repository
+      description: This endpoint may also return pull requests in the response. If an issue is a pull request, the object will include a pull_request key.
+      operationId: listRepoIssues
+      responses:
+        '200':
+          description: Successfully retrived the data
+          content:
+            application/json:
+              schema: 
+                $ref: './components/schemas/Issues.yaml'
+    post:
+      tags:
+        - Issues
+      summary: Create an issue
+      description: Any user with read access to a repository can create an issue.
+      operationId: createIssue
+      requestBody: 
+        content:
+          application/json:
+            schema: 
+              $ref: './components/schemas/PostIssue.yaml'
+      responses:
+        '201':
+          description: Successfully created an issue
+          content:
+            application/json:
+              schema: 
+                $ref: './components/schemas/Issue.yaml'
+    patch:
+      tags:
+        - Issues
+      summary: Edit an issue
+      operationId: editIssue
+      requestBody: 
+        content:
+          application/json:
+            schema:
+              $ref: './components/schemas/PatchIssue.yaml'
+      responses:
+        '201':
+          description: Successfully created an issue
+          content:
+            application/json:
+              schema: 
+                $ref: './components/schemas/Issue.yaml'
+  /repos/{owner}/{repo}/issues/{index}:
+    get:
+      tags:
+        - Issues
+      summary: Get a single issue
+      description: This endpoint may also return pull requests in the response. If an issue is a pull request, the object will include a pull_request key.
+      operationId: getIssue
+      parameters:
+      - $ref: './components/parameters/Owner.yaml'
+      - $ref: './components/parameters/Repository.yaml'
+      - $ref: './components/parameters/Index.yaml'
+      responses:
+        '200':
+          description: Successfully retrived the data
+          content:
+            application/json:
+              schema: 
+                $ref: './components/schemas/Issue.yaml'
+  /repos/search:
+    get:
+      summary: Search repositories
+      tags:
+        - Repository
+      operationId: search
+      parameters:
+        - name: q
+          in: query
+          required: true
+          schema:
+            type: string
+        - name: uid
+          in: query
+          description: User ID to specify search whose repositories. Default is 0 and search all repositories
+          schema:
+            type: integer
+            default: 0
+        - name: limit
+          in: query
+          description: Maximum number of repositories in search results.
+          schema:
+            type: integer
+            default: 10
+        - name: page
+          in: query
+          description: Page number. Default is 1.
+          schema:
+            type: integer
+            default: 1
+      responses:
+        '200':
+          description: Success
+          content:
+            application/json:
+              schema: 
+                example:
+                  {
+                    "data": [
+                      {
+                        "id": 1213,
+                        "owner": {
+                          "id": 6,
+                          "login": "DAGsHub-Official",
+                          "full_name": "DagsHub Official",
+                          "avatar_url": "https://dagshub.com/avatars/6",
+                          "username": "DAGsHub-Official"
+                        },
+                        "name": "dagshub-docs",
+                        "full_name": "DAGsHub-Official/dagshub-docs",
+                        "description": "Official repo for DagsHub documentation.",
+                        "private": false,
+                        "fork": false,
+                        "parent": null,
+                        "empty": false,
+                        "mirror": false,
+                        "size": 458313728,
+                        "html_url": "https://dagshub.com/DAGsHub-Official/dagshub-docs",
+                        "ssh_url": "ssh://git@dagshub.com:2200/DAGsHub-Official/dagshub-docs.git",
+                        "clone_url": "https://dagshub.com/DAGsHub-Official/dagshub-docs.git",
+                        "website": "https://dagshub.com/docs",
+                        "stars_count": 4,
+                        "forks_count": 11,
+                        "watchers_count": 1,
+                        "open_issues_count": 2,
+                        "default_branch": "main",
+                        "created_at": "2021-02-23T11:53:45Z",
+                        "updated_at": "2022-09-14T09:55:35Z"
+                      },
+                    ],
+                    "ok": true,
+                  }
+  /user/repos:  
+    get:
+      summary: List your repositories
+      description: |
+        List repositories that are accessible to the authenticated user.
+
+        This includes repositories owned by the authenticated user, repositories where the authenticated user is a collaborator, and repositories that the authenticated user has access to through an organization membership.
+      operationId: listMyRepos
+      tags:
+        - Repository
+      responses:
+        '200':
+          description: Success
+          content:
+            application/json:
+              schema: 
+                example:
+                  [
+                    {
+                      "id": 2942,
+                      "owner": {
+                        "id": 23,
+                        "login": "DagsHub",
+                        "full_name": "DagsHub",
+                        "avatar_url": "https://dagshub.com/avatars/23",
+                        "username": "DagsHub"
+                      },
+                      "name": "audio-datasets",
+                      "full_name": "DagsHub/audio-datasets",
+                      "description": "Open-source audio datasets hosted on DagsHub",
+                      "private": false,
+                      "fork": false,
+                      "parent": null,
+                      "empty": false,
+                      "mirror": true,
+                      "size": 10121216,
+                      "html_url": "https://dagshub.com/DagsHub/audio-datasets",
+                      "ssh_url": "ssh://git@dagshub.com:2200/DagsHub/audio-datasets.git",
+                      "clone_url": "https://github.com/DAGsHub/audio-datasets.git",
+                      "website": "",
+                      "stars_count": 2,
+                      "forks_count": 2,
+                      "watchers_count": 7,
+                      "open_issues_count": 11,
+                      "default_branch": "main",
+                      "created_at": "2021-10-05T16:02:42Z",
+                      "updated_at": "2022-08-22T09:54:12Z",
+                      "permissions": {
+                        "admin": true,
+                        "push": true,
+                        "pull": true
+                      }
+                    },
+                  ]
+    post:
+      tags:
+        - Repository
+      summary: Create
+      description: Create a new repository for the authenticated user.
+      operationId: createRepo
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: './components/schemas/CreateRepo.yaml'
+      responses:
+        '201':
+          description: Created
+  /users/{username}/repos:
+    get:
+      summary: List user repositories
+      description: List public repositories for the specified user.
+      operationId: listUserRepos
+      tags:
+        - Repository
+      parameters:
+        - $ref: './components/parameters/Username.yaml'
+      responses:
+        '200':
+          description: Success
+  /orgs/{orgname}/repos:
+    get:
+      tags:
+      - Repository
+      operationId: listOrgRepos
+      summary: List organization repositories
+      description: List repositories that are accessible to the authenticated user.
+      parameters:
+        - $ref: './components/parameters/Orgname.yaml'
+      responses:
+        '200':
+          description: Success
+  /org/{orgname}/repos:
+    post:
+      tags:
+        - Repository
+      operationId: createOrgRepo
+      summary: Create in organization
+      description: Create a new repository in this organization. The authenticated user must be an **owner** of the specified organization.
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: './components/schemas/CreateRepo.yaml'
+      parameters:
+        - $ref: './components/parameters/Orgname.yaml'
+      responses:
+        '201':
+          description: Created
+  /repos/migrate:
+    post:
+      tags:
+        - Repository
+      summary: Migrate repository 
+      description: |
+        Migrate a repository from other Git hosting sources for the authenticated user.
+
+        To migrate a repository for a organization, the authenticated user must be a **owner** of the specified organization.
+      operationId: migrateRepo
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: './components/schemas/MigrateRepo.yaml'
+      responses:
+        '201': 
+          description: Created
+  /repos/{username}/{repo}/raw/{ref}/{path}:
+    get:
+      tags:
+        - Content
+      summary: Download raw content
+      description: This method returns the raw content of a file.
+      operationId: getRaw
+      parameters:
+        - $ref: './components/parameters/Username.yaml'
+        - $ref: './components/parameters/Repository.yaml'
+        - $ref: './components/parameters/Ref.yaml'
+        - name: path
+          in: path
+          required: true
+          description: The content path
+          schema: 
+            type: string
+      responses:
+        '200':
+          description: OK
+  /repos/{username}/{repo}/archive/{ref}/{format}:
+    get:
+      tags:
+        - Content
+      summary: Download archive
+      description: This method returns archive by given format.
+      operationId: getArchive
+      parameters:
+        - $ref: './components/parameters/Username.yaml'
+        - $ref: './components/parameters/Repository.yaml'
+        - $ref: './components/parameters/Ref.yaml'
+        - name: format
+          in: path
+          required: true
+          description: The format of archive, either .zip or .tar.gz
+          schema:
+            type: string
+            enum: [.zip, .tar.gz]
+      responses:
+        '200':
+          description: OK
+  /repos/{owner}/{repo}/branches:
+    get:
+      tags:
+        - Branches
+      operationId: listBranches
+      summary: List Branches
+      parameters:
+        - $ref: './components/parameters/Owner.yaml'
+        - $ref: './components/parameters/Repository.yaml'
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              example: 
+                [
+                  {
+                      "name":"master",
+                      "commit":{
+                        "id":"c1c220c4dd6df895965a02b8be575c5e2f78dfd1",
+                        "message":"A commit message. \n",
+                        "url":"Not implemented",
+                        "author":{
+                            "name":"Author Name",
+                            "email":"author@email.com",
+                            "username":""
+                        }
+                      }
+                  },
+                  {
+                      "name":"second-branch",
+                      "commit":{
+                        "id":"0a0fdf63c23af6a2836c426c5284136015ec2996",
+                        "message":"A second commit message.\n",
+                        "url":"Not implemented",
+                        "author":{
+                            "name":"Author Name",
+                            "email":"author@email.com",
+                            "username":""
+                        }
+                      }
+                  }
+                ]
+  /repos/{owner}/{repo}/branches/{branch}:
+    get:
+      tags:
+        - Branches
+      summary: Get Branch
+      operationId: getBranch
+      parameters:
+        - $ref: './components/parameters/Owner.yaml'
+        - $ref: './components/parameters/Repository.yaml'
+        - $ref: './components/parameters/Branch.yaml'
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              example:
+                {
+                  "name":":branchname",
+                  "commit":{
+                      "id":"0a0fdf63c23af6a2836c426c5284136015ec2996",
+                      "message":"A second commit message.\n",
+                      "url":"Not implemented",
+                      "author":{
+                        "name":"Author Name",
+                        "email":"author@email.com",
+                        "username":""
+                      }
+                  }
+                }
+  /repos/{username}/{repo}/collaborators/{collaborator}:
+    put:
+      tags:
+        - Collaborators
+      summary: Add user as a collaborator
+      operationId: addCollaborator
+      parameters:
+        - $ref: './components/parameters/Username.yaml'
+        - $ref: './components/parameters/Repository.yaml'
+        - $ref: './components/parameters/Collaborator.yaml'
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                permission:
+                  type: string
+                  description: The permission to grant the collaborator. Can be one of **read**, **write** and **admin**.
+                  default: write
+      responses:
+        '200':
+          description: Success
+    delete:
+      tags:
+        - Collaborators
+      summary: Delete collaborator
+      operationId: removeCollaborator
+      responses:
+        '204':
+          description: No Content, deleted successfully
+        '422':
+          description: User does not exist
+        '500':
+          description: Internal error
+  /repos/{username}/{repo}/collaborators:
+    get:
+      tags:
+        - Collaborators
+      summary: Get collaborators
+      operationId: getCollaborators
+      parameters:
+        - $ref: './components/parameters/Username.yaml'
+        - $ref: './components/parameters/Repository.yaml'
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              example:
+                [
+                  {
+                    "id": 3,
+                    "username": "user1",
+                    "login": "user1",
+                    "full_name": "",
+                    "email": "user1@user.com",
+                    "avatar_url": "https://secure.gravatar.com/avatar/0207f4280f6c1bd45e1a2ed7cb1cca3d",
+                    "permissions": {
+                      "admin": false,
+                      "push": true,
+                      "pull": true
+                    }
+                  }
+                ]
+  /repos/{owner}/{repo}/commits/{sha}:
+    get:
+      tags:
+        - Commits
+      operationId: getCommit
+      summary: Get a single commit
+      parameters:
+        - $ref: './components/parameters/Owner.yaml'
+        - $ref: './components/parameters/Repository.yaml'
+        - $ref: './components/parameters/Sha.yaml'
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              example:
+                {
+                  "commit": {
+                    "id": "106201d5de4b7f0cce296b4578747ba43504d152",
+                    "message": "Merge pull request #65 from drecali/main\n\nfix broken Discord invite link and clarify project sharing instructions",
+                    "url": "",
+                    "author": {
+                      "name": "Dean P",
+                      "email": "deanp07@gmail.com",
+                      "username": ""
+                    },
+                    "committer": {
+                      "name": "GitHub",
+                      "email": "noreply@github.com",
+                      "username": ""
+                    },
+                    "added": null,
+                    "removed": null,
+                    "modified": null,
+                    "timestamp": "2022-08-22T09:53:53Z"
+                  },
+                  "files": [
+                    {
+                      "filename": "CONTRIBUTING.md",
+                      "sha": "Not Implemented",
+                      "blob_url": "Not Implemented",
+                      "additions": 1,
+                      "deletions": 1,
+                      "changes": 2,
+                      "status": "changed"
+                    }
+                  ],
+                  "stats": {
+                    "additions": 1,
+                    "deletions": 1,
+                    "total": 2
+                  },
+                  "experiment": null
+                }
+  /repos/{owner}/{repo}/commits/{ref}:
+    get:
+      tags:
+        - Commits
+      operationId: getCommitSha1
+      summary: Get the SHA-1 of a commit reference
+      parameters:
+        - $ref: './components/parameters/Owner.yaml'
+        - $ref: './components/parameters/Repository.yaml'
+        - $ref: './components/parameters/Ref.yaml'
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              example: dc20792485ffd49b0bca49f90a8d44a16241b84a
+              schema:
+                type: string      
+  /repos/{owner}/{repo}/releases:
+    get:
+      tags:
+        - Releases
+      summary: List Releases
+      operationId: listReleases
+      parameters:
+        - $ref: './components/parameters/Owner.yaml'
+        - $ref: './components/parameters/Repository.yaml'
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              example: 
+                [
+                  {
+                    "id": 1,
+                    "tag_name": "sometag",
+                    "target_commitish": "master",
+                    "name": "awesome-release",
+                    "body": "Description of the release",
+                    "draft": false,
+                    "prerelease": false,
+                    "author": {
+                      "id": 1,
+                      "username": "Author Name",
+                      "login": "",
+                      "full_name": "",
+                      "email":"author@email.com",
+                      "avatar_url": ""
+                    },
+                    "created_at": "2020-03-28T13:38:00+03:00"
+                  }
+                ]
+  /repos/{owner}/{repo}/hooks:
+    parameters:
+      - $ref: './components/parameters/Owner.yaml'
+      - $ref: './components/parameters/Repository.yaml'
+    get:
+      tags:
+        - Webhooks
+      summary: List hooks
+      operationId: listHooks
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              example:
+                [
+                  {
+                    "id": 9,
+                    "type": "dagshub",
+                    "config": {
+                      "content_type": "json",
+                      "url": "<webhook-url>"
+                    },
+                    "events": [
+                      "create",
+                      "delete",
+                      "push",
+                      "pull_request",
+                      "release"
+                    ],
+                    "active": true,
+                    "updated_at": "2022-09-14T10:01:11Z",
+                    "created_at": "2021-03-21T11:39:30Z"
+                  },
+                  {
+                    "id": 11,
+                    "type": "discord",
+                    "config": {
+                      "content_type": "json",
+                      "url": "https://discord.com/api/webhooks/awesome-webhook"
+                    },
+                    "events": [
+                      "fork",
+                      "issues",
+                      "pull_request",
+                      "issue_comment"
+                    ],
+                    "active": true,
+                    "updated_at": "2022-09-14T10:01:12Z",
+                    "created_at": "2021-03-22T11:28:45Z"
+                  }
+                ]
+    post:
+      tags:
+        - Webhooks
+      summary: Create a hook
+      operationId: createHook
+      requestBody:
+        content:
+          application/json: 
+            schema:
+              type: object
+              properties:
+                type:
+                  type: string
+                  description: The type of webhook
+                  enum: 
+                    - dagshub
+                    - slack
+                    - discord
+                    - dingtalk
+                  example: discord
+                config: 
+                  $ref: './components/schemas/WebhookConfig.yaml'
+                events:
+                  $ref: './components/schemas/WebhookEvents.yaml'
+              required:
+                - type
+                - config
+      responses:
+        '201':
+          description: Created
+          content:
+            application/json:
+              example:
+                {
+                "id": 20,
+                "type": "discord",
+                "config": {
+                  "content_type": "json",
+                  "url": "<webhook-url>"
+                },
+                "events": [
+                  "create",
+                  "push"
+                ],
+                "active": true,
+                "updated_at": "2022-08-29T11:31:22.453572732+08:00",
+                "created_at": "2022-08-29T11:31:22.453569275+08:00"
+              }
+  /repos/{owner}/{repo}/hooks/{id}:
+    parameters:
+        - $ref: './components/parameters/Owner.yaml'
+        - $ref: './components/parameters/Repository.yaml'
+        - name: id
+          in: path
+          schema:
+            type: integer
+          required: true
+    patch:
+      tags:
+        - Webhooks
+      summary: Edit a hook
+      operationId: editHook
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                config:
+                  $ref: './components/schemas/WebhookConfig.yaml'
+                events:
+                  $ref: './components/schemas/WebhookEvents.yaml'
+                active:
+                  type: boolean
+                  description: Weather the hook is actually triggered on pushes or not. Ignore this field to leave it unchanged.
+      responses:
+        '200': 
+          description: OK
+          content:
+            application/json:
+              example:
+                {
+                  "id": 20,
+                  "type": "dagshub",
+                  "config": {
+                    "content_type": "json",
+                    "url": "<webhook-url>"
+                  },
+                  "events": [
+                    "push"
+                  ],
+                  "active": true,
+                  "updated_at": "2022-08-29T11:45:30.577057789+08:00",
+                  "created_at": "2022-08-29T11:31:22+08:00"
+                }
+    delete:
+      summary: Delete a hook
+      operationId: deleteHook
+      tags:
+        - Webhooks
+      responses:
+        '204':
+          description: No Content, deleted successfully
+components:
+  securitySchemes:
+    basicAuth:
+      type: http
+      scheme: basic
+      description: |
+       Use your DagsHub username and password/access token.
+    tokenAuth:
+      type: apiKey
+      in: query
+      name: token
+      description: |
+        You can generate a token [here](http://dagshub.com/user/settings/tokens)

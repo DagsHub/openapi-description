@@ -1,0 +1,20 @@
+type: object
+properties:
+  path: 
+    type: string
+    example: "images/000.png"
+  type: 
+    type: string
+    example: "file"
+  size:
+    type: integer
+    format: int64
+    example: 421
+  hash:
+    type: string
+    example: 79fb7f8632d7e15b3b46a7411d08bcdd
+  versioning:
+    type: string
+    example: "dvc"
+  download_url:
+    type: string

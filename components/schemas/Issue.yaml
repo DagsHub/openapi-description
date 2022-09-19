@@ -1,0 +1,97 @@
+type: object
+properties:
+  id:
+    type: integer
+  number:
+    type: integer
+  user:
+    $ref: './User.yaml'
+  title:
+    $ref: './Title.yaml'
+  body:
+    $ref: './Body.yaml'
+  labels:
+    type: array
+    items:
+      type: object
+      properties:
+        id:
+          type: integer
+        name:
+          type: string
+        color:
+          type: string
+        url:
+          type: string
+  milestone:
+    type: object
+    properties:
+      id:
+        type: integer
+      title:
+        type: string
+      description:
+        type: string
+      state:
+        type: string
+      open_issues:
+        type: integer
+      closed_issues:
+        type: integer
+      closed_at:
+        type: string
+      due_on:
+        type: string
+    additionalProperties: false
+  assignee:
+    type: object
+    properties:
+      id:
+        type: integer
+      login:
+        type: string
+      full_name:
+        type: string
+      avatar_url:
+        type: string
+      username:
+        type: string
+    additionalProperties: false
+  state:
+    type: string
+  comments:
+    type: integer
+  created_at:
+    type: string
+  updated_at:
+    type: string
+  pull_request:
+    type: object
+  closed: 
+    type: boolean
+required:
+  - title
+  - body
+  - assignee
+  - milestone
+  - labels
+  - closed
+example:
+  id: 72
+  number: 1
+  state: "open"
+  title: "test issue"
+  body: ""
+  user:
+    id: 3
+    username: "user1"
+    full_name: ""
+    email: "fake@local"
+    avatar_url: "https://secure.gravatar.com/avatar/0207f4280f6c1bd45e1a2ed7cb1cca3d"
+  labels: ["bug"]
+  assignee: null
+  milestone: null
+  comments: 1
+  pull_request: null
+  created_at: "2016-03-05T13:18:51-05:00"
+  updated_at: "2016-03-05T13:18:51-05:00"

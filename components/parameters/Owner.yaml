@@ -1,0 +1,7 @@
+name: owner
+example: DAGsHub-Official
+in: path
+description: owner of the repository
+required: true
+schema:
+  type: string

@@ -1,0 +1,6 @@
+name: branch
+in: path
+description: branch of the repository
+required: true
+schema:
+  type: string

@@ -1,0 +1,7 @@
+type: string
+default: 
+description: |
+  Username for the user that this issue should be assigned to. 
+  
+  **Note:** Only users with write access can set the assignee for new issues. 
+  The assignee is silently dropped otherwise.

@@ -1,0 +1,6 @@
+name: path
+in: path
+description: path of a folter in the repository
+required: true
+schema:
+  type: string

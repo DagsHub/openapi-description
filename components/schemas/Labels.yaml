@@ -1,0 +1,8 @@
+type: array
+items:
+  type: integer
+description: |
+  Labels **ID** to associate with this issue. 
+  
+  **Note:** Only users with write access can set labels for new issues. 
+  Labels are silently dropped otherwise.

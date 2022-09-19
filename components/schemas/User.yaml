@@ -1,0 +1,13 @@
+type: object
+properties:
+  id:
+    type: integer
+  login:
+    type: string
+  full_name:
+    type: string
+  avatar_url:
+    type: string
+  username:
+    type: string
+additionalProperties: false

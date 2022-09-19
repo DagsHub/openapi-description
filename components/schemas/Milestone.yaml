@@ -1,0 +1,6 @@
+type: integer
+description: |
+  The **ID** of the milestone to associate this issue with. 
+  
+  **Note:** Only users with write access can set the milestone for new issues. 
+  The milestone is silently dropped otherwise.

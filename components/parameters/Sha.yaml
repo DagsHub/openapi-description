@@ -1,0 +1,7 @@
+name: sha
+in: path
+required: true
+description: a SHA1 of a commit
+schema:
+  type: string
+  example: 9227a50146b3fd815fe864af99b984c77d06326a

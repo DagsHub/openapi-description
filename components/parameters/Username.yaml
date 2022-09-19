@@ -1,0 +1,7 @@
+name: username
+example: nirbarazida
+in: path
+description: A DagsHub username
+required: true
+schema:
+  type: string

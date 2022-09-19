@@ -1,0 +1,3 @@
+type: string
+description: The title of the issue
+example: Test Issue from API documentation

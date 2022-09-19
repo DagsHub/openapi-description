@@ -1,0 +1,19 @@
+type: object
+description: Key/value pairs to provide settings for this hook
+properties:
+  url: 
+    type: string
+    description: A string defining the URL to which the payloads will be delivered.
+    example: http://yourwebsite.io
+  content_type:
+    type: string
+    description: A string defining the media type used to serialize the payloads.
+    enum: [json, form]
+    example: json
+  secret:
+    type: string
+    description: An optional string that's passed with the HTTP requests body.
+    example: supersecretkey
+required:
+  - url
+  - content_type

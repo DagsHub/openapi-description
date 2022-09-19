@@ -1,0 +1,5 @@
+type: boolean
+default: false
+example: true
+description: |
+  Indicate initial issue state as closed (**true**) or open (**false**).

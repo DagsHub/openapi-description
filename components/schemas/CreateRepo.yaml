@@ -1,0 +1,66 @@
+type: object
+properties:
+  name:
+    type: string
+    example: repo-name
+    description: name of the repository
+  description:
+    type: string
+    description: A short description of the repository
+  private:
+    type: boolean
+    description: Either true to create a private repository, or false to create a public one.
+    default: false
+  auto_init:
+    type: boolean
+    description: Pass true to create an initial commit with README, .gitignore and LICENSE.
+    default: false
+  gitignores:
+    type: string
+    description: Desired language .gitignore templates to apply. Use the name of the templates.
+    example: "Go, Sublime Text"
+  license:
+    type: string
+    description: Desired LICENSE template to apply. Use the name of the template.
+    example: MIT License
+    enum:
+      - Apache License 2.0
+      - MIT License
+      - Abstyles License
+      - Academic Free License v1.1
+      - Academic Free License v1.2
+      - Academic Free License v2.0
+      - Academic Free License v2.1
+      - Academic Free License v3.0
+      - Affero General Public License v1.0
+      - Apache License 1.0
+      - Apache License 1.1
+      - Artistic License 1.0
+      - Artistic License 2.0
+      - BSD 2-clause License
+      - BSD 3-clause License
+      - BSD 4-clause License
+      - Creative Commons CC0 1.0 Universal
+      - Eclipse Public License 1.0
+      - Educational Community License v1.0
+      - Educational Community License v2.0
+      - GNU Affero General Public License v3.0
+      - GNU Free Documentation License v1.1
+      - GNU Free Documentation License v1.2
+      - GNU Free Documentation License v1.3
+      - GNU General Public License v1.0
+      - GNU General Public License v2.0
+      - GNU General Public License v3.0
+      - GNU Lesser General Public License v2.1
+      - GNU Lesser General Public License v3.0
+      - GNU Library General Public License v2.0
+      - ISC license
+      - Mozilla Public License 1.0
+      - Mozilla Public License 1.1
+      - Mozilla Public License 2.03
+  readme:
+    type: string
+    description: Desired README template to apply. Use the name of the template.
+    default: Default
+required:
+  - name

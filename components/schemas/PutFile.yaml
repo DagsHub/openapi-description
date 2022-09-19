@@ -1,0 +1,30 @@
+type: object
+properties:
+  commit_summary: 
+    type: string
+    example: "..."
+  commit_message: 
+    type: string
+    example: "..."
+  commit_choice:
+    type: string
+    enum: [direct, commit-to-new-branch]
+    example: direct
+  last_commit:
+    type: string
+    description: if omitted only new files will be accepted
+    example: 79fb7f8632d7e15b3b46a7411d08bcdd
+  new_branch_name:
+    type: string
+    example: new-branch
+  versioning:
+    type: string
+    enum: [dvc, git]
+    example: "dvc"
+  files:
+    type: array
+    items:
+      type: object
+      example: {"file1" : "new content"}
+required:
+  - commit_message

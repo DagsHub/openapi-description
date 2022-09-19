@@ -1,0 +1,6 @@
+name: collaborator
+in: path
+description: collaborator username
+required: true
+schema:
+  type: string

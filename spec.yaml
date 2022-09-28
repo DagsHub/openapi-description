@@ -2,16 +2,93 @@
 openapi: 3.0.3
 info:
   title: DagsHub API
-  version: 1.0.1
+  version: 1.0.2
   description: |
     The api docs are made with SwaggerUI using the OpenAPI 3 specification.
    
 servers:
-  - url: http://dagshub.com/api/v1/
+  - url: https://dagshub.com/api/v1/
 security:
   - basicAuth: []
   - tokenAuth: []
 paths:
+  /repos/{owner}/{repo}/content/{branch}/{path}:
+    get:
+      tags:
+      - Content
+      summary: Get data from a folder in repository
+      description: |
+        List files, commit sha1, and versioning type for a folder in repository.
+        
+        To get sizes add to the query param `include_size=true`. May result slower response.
+      operationId: getContent
+      parameters:
+      - $ref: './components/parameters/Owner.yaml'
+      - $ref: './components/parameters/Repository.yaml'
+      - $ref: './components/parameters/Branch.yaml'
+      - $ref: './components/parameters/Path.yaml'
+      - name: include_size
+        in: query
+        required: false
+        schema:
+          type: boolean
+          default: false
+      responses:
+        '200': 
+          description: Successfully retrived the data
+          content:
+            application/json:
+              schema:
+                $ref: './components/schemas/Files.yaml'
+              example:
+                  [
+                    {
+                      "path": "images/000.png",
+                      "type": "file",
+                      "size": 0,
+                      "sha": "79fb7f8632d7e15b3b46a7411d08bcdd",
+                      "versioning": "dvc",
+                      "download_url": "https://dagshub.com/Simon/baby-yoda-segmentation-dataset/raw/master/images/000.png"
+                    },
+                    {
+                      "path": "images/001.png",
+                      "type": "file",
+                      "size": 0,
+                      "sha": "7dd5befce39375036da253b435e1db98",
+                      "versioning": "dvc",
+                      "download_url": "https://dagshub.com/Simon/baby-yoda-segmentation-dataset/raw/master/images/001.png"
+                    },
+                    {
+                      "path": "images/002.png",
+                      "type": "file",
+                      "size": 0,
+                      "sha": "a58f181cd982a1e21c77949588737c8b",
+                      "versioning": "dvc",
+                      "download_url": "https://dagshub.com/Simon/baby-yoda-segmentation-dataset/raw/master/images/002.png"
+                    },
+                  ]
+        '404':
+          description: Non existing path
+    put:
+      tags:
+        - Content
+      summary: Upload data to a repository
+      description: |
+        **`last_commit`** - If the tip of the branch differs on the server at the moment of processing the request, the request is denied.
+      operationId: uploadContent
+      parameters:
+      - $ref: './components/parameters/Owner.yaml'
+      - $ref: './components/parameters/Repository.yaml'
+      - $ref: './components/parameters/Branch.yaml'
+      - $ref: './components/parameters/Path.yaml'
+      requestBody:
+        content:
+          multipart/form-data:
+            schema:
+              $ref: './components/schemas/PutFile.yaml'
+      responses:
+        '200':
+          description: Successfully uploaded content
   /repos/{owner}/{repo}/issues:
     parameters:
       - $ref: './components/parameters/Owner.yaml'

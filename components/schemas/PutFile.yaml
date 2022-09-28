@@ -19,12 +19,12 @@ properties:
     example: new-branch
   versioning:
     type: string
-    enum: [dvc, git]
-    example: "dvc"
+    enum: [auto, dvc, git]
+    example: dvc
   files:
     type: array
     items:
       type: object
-      example: {"file1" : "new content"}
+      example: [{"files": {"file1" : "new content"}}]
 required:
   - commit_message

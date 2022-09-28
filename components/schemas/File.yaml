@@ -2,19 +2,27 @@ type: object
 properties:
   path: 
     type: string
-    example: "images/000.png"
+    example: images/000.png
   type: 
     type: string
-    example: "file"
+    enum:
+      - file
+      - dir
+    example: 
+      - file
   size:
     type: integer
     format: int64
     example: 421
-  hash:
+  sha:
     type: string
     example: 79fb7f8632d7e15b3b46a7411d08bcdd
   versioning:
     type: string
-    example: "dvc"
+    enum:
+      - git
+      - dvc
+    example: dvc
   download_url:
     type: string
+    example: https://dagshub.com/Simon/baby-yoda-segmentation-dataset/raw/master/images/000.png

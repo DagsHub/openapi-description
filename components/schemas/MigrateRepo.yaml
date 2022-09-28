@@ -20,9 +20,12 @@ properties:
     type: boolean
     description: Repository will be a mirror (connected repository).
     default: false
-  private:
-    type: boolean
-    description: Repository will be private.
+  visibility:
+    type: string
+    description: Repository will be private or public.
+    enum: 
+      - private
+      - public
     default: false
   description:
     type: string

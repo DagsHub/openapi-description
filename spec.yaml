@@ -73,8 +73,6 @@ paths:
       tags:
         - Content
       summary: Upload data to a repository
-      description: |
-        **`last_commit`** - If the tip of the branch differs on the server at the moment of processing the request, the request is denied.
       operationId: uploadContent
       parameters:
       - $ref: './components/parameters/Owner.yaml'

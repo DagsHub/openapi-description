@@ -12,7 +12,10 @@ properties:
     example: direct
   last_commit:
     type: string
-    description: if omitted only new files will be accepted
+    description: |
+      If omitted, **only new files** will be accepted. 
+        
+      Otherwise, the request is accepted only if **the tip of the branch is the same as `last_commit`** at the moment of processing the request.
     example: 79fb7f8632d7e15b3b46a7411d08bcdd
   new_branch_name:
     type: string

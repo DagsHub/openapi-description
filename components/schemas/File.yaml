@@ -14,7 +14,7 @@ properties:
     type: integer
     format: int64
     example: 421
-  sha:
+  hash:
     type: string
     example: 79fb7f8632d7e15b3b46a7411d08bcdd
   versioning:

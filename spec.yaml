@@ -7,7 +7,7 @@ info:
     The api docs are made with SwaggerUI using the OpenAPI 3 specification.
    
 servers:
-  - url: http://dagshub.com/api/v1/
+  - url: https://dagshub.com/api/v1/
 security:
   - basicAuth: []
   - tokenAuth: []

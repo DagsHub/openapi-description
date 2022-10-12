@@ -12,6 +12,121 @@ security:
   - basicAuth: []
   - tokenAuth: []
 paths:
+  /user:
+    get:
+      tags:
+        - User
+      operationId: GetAuthenticatedUser
+      summary: Get authenticated user information
+      responses:
+        '200':
+          description: successfully retrived user information
+          content:
+            application/json:
+              example:
+                {
+                  "id": 5,
+                  "login": "Dean",
+                  "full_name": "Dean Pleban",
+                  "avatar_url": "https://dagshub.com/avatars/5",
+                  "username": "Dean"
+                }
+  /users/{username}:
+    get:
+      tags:
+        - User
+      operationId: getUser
+      summary: Get information about a user
+      parameters:
+        - $ref: './components/parameters/Username.yaml'
+      responses:
+        '200':
+          description: successfully retrieved user information
+          content:
+            application/json:
+              example:
+                  {
+                  "id": 5,
+                  "login": "Dean",
+                  "full_name": "Dean Pleban",
+                  "avatar_url": "https://dagshub.com/avatars/5",
+                  "username": "Dean"
+                }
+  /repos/{owner}/{repo}/content/{branch}/{path}:
+    get:
+      tags:
+      - Content
+      summary: Get data from a folder in repository
+      description: |
+        List files, commit sha1, and versioning type for a folder in repository.
+        
+        To get sizes add to the query param `include_size=true`. May result slower response.
+      operationId: getContent
+      parameters:
+      - $ref: './components/parameters/Owner.yaml'
+      - $ref: './components/parameters/Repository.yaml'
+      - $ref: './components/parameters/Branch.yaml'
+      - $ref: './components/parameters/Path.yaml'
+      - name: include_size
+        in: query
+        required: false
+        schema:
+          type: boolean
+          default: false
+      responses:
+        '200': 
+          description: Successfully retrived the data
+          content:
+            application/json:
+              schema:
+                $ref: './components/schemas/Files.yaml'
+              example:
+                  [
+                    {
+                      "path": "images/000.png",
+                      "type": "file",
+                      "size": 0,
+                      "hash": "79fb7f8632d7e15b3b46a7411d08bcdd",
+                      "versioning": "dvc",
+                      "download_url": "https://dagshub.com/Simon/baby-yoda-segmentation-dataset/raw/master/images/000.png"
+                    },
+                    {
+                      "path": "images/001.png",
+                      "type": "file",
+                      "size": 0,
+                      "hash": "7dd5befce39375036da253b435e1db98",
+                      "versioning": "dvc",
+                      "download_url": "https://dagshub.com/Simon/baby-yoda-segmentation-dataset/raw/master/images/001.png"
+                    },
+                    {
+                      "path": "images/002.png",
+                      "type": "file",
+                      "size": 0,
+                      "hash": "a58f181cd982a1e21c77949588737c8b",
+                      "versioning": "dvc",
+                      "download_url": "https://dagshub.com/Simon/baby-yoda-segmentation-dataset/raw/master/images/002.png"
+                    },
+                  ]
+        '404':
+          description: Non existing path
+    put:
+      tags:
+        - Content
+      summary: Upload data to a repository
+      operationId: uploadContent
+      parameters:
+      - $ref: './components/parameters/Owner.yaml'
+      - $ref: './components/parameters/Repository.yaml'
+      - $ref: './components/parameters/Branch.yaml'
+      - $ref: './components/parameters/Path.yaml'
+      requestBody:
+        content:
+          multipart/form-data:
+            schema:
+              $ref: './components/schemas/PutFile.yaml'
+      responses:
+        '200':
+          description: Successfully uploaded content
   /repos/{owner}/{repo}/issues:
     parameters:
       - $ref: './components/parameters/Owner.yaml'
@@ -82,6 +197,7 @@ paths:
             application/json:
               schema: 
                 $ref: './components/schemas/Issue.yaml'
+  
   /repos/search:
     get:
       summary: Search repositories
@@ -154,6 +270,18 @@ paths:
                     ],
                     "ok": true,
                   }
+  /repos/{username}/{repo}:
+    get:
+      tags:
+        - Repository
+      summary: Get repository information
+      operationId: getRepo
+      parameters:
+        - $ref: './components/parameters/Username.yaml'
+        - $ref: './components/parameters/Repository.yaml'
+      responses:
+        '200':
+          description: repository information successfully retrieved
   /user/repos:  
     get:
       summary: List your repositories

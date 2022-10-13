@@ -20,7 +20,7 @@ paths:
       summary: Get authenticated user information
       responses:
         '200':
-          description: successfully retrived user information
+          description: successfully retrieved user information
           content:
             application/json:
               example:
@@ -56,11 +56,11 @@ paths:
     get:
       tags:
       - Content
-      summary: Get data from a folder in repository
+      summary: List contents of a folder in repository
       description: |
         List files, commit sha1, and versioning type for a folder in repository.
         
-        To get sizes add to the query param `include_size=true`. May result slower response.
+        To get sizes, add `include_size=true` to the query params. May result in a slower response.
       operationId: getContent
       parameters:
       - $ref: './components/parameters/Owner.yaml'
@@ -75,7 +75,7 @@ paths:
           default: false
       responses:
         '200': 
-          description: Successfully retrived the data
+          description: Successfully retrieved the data
           content:
             application/json:
               schema:

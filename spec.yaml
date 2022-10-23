@@ -122,7 +122,28 @@ paths:
             application/json:
               schema: 
                 $ref: './components/schemas/Issue.yaml'
-  
+  /experiments/experiment/{experiment}/name:
+    post:
+      tags:
+        - Experiments
+      summary: Set name for experiment
+      description: Set a name for an experiment by index
+      operationId: setExperimentName
+      parameters:
+      - $ref: './components/parameters/ExperimentKey.yaml'
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: './components/schemas/ExperimentNamePost.yaml'
+      responses:
+        '200':
+          description: Set name for experiment
+          content:
+            application/json:
+              example:
+                {name: "Awesome Experiment"}
+
   /repos/search:
     get:
       summary: Search repositories

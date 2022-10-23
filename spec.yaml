@@ -127,7 +127,7 @@ paths:
       tags:
         - Experiments
       summary: Set name for experiment
-      description: Set a name for an experiment by index
+      description: Set a name for an experiment by experiment key
       operationId: setExperimentName
       parameters:
       - $ref: './components/parameters/ExperimentKey.yaml'
@@ -138,7 +138,7 @@ paths:
               $ref: './components/schemas/ExperimentNamePost.yaml'
       responses:
         '200':
-          description: Set name for experiment
+          description: Set name for experiment successfully
           content:
             application/json:
               example:

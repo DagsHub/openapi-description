@@ -122,7 +122,7 @@ paths:
             application/json:
               schema: 
                 $ref: './components/schemas/Issue.yaml'
-  /experiments/experiment/{experiment}/name:
+  /experiments/experiment/{experimentKey}/name:
     post:
       tags:
         - Experiments

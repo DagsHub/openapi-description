@@ -47,6 +47,8 @@ jobs:
         with:
           github_token: ${{ secrets.GITHUB_TOKEN }}
           branch: update-clients-$GITHUB_RUN_NUMBER.$GITHUB_RUN_ATTEMPT
+          directory: api-clients
+          repository: api-clients
       - name: open PR
         run: |
           curl \

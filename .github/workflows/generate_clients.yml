@@ -43,7 +43,7 @@ jobs:
       - name: GitHub Push
         uses: ad-m/github-push-action@v0.6.0
         with:
-          github_token: ${{ secrets.GITHUB_TOKEN }}
+          github_token: ${{ secrets.PAT }}
           branch: update-clients-$GITHUB_RUN_NUMBER.$GITHUB_RUN_ATTEMPT
           directory: api-clients
           repository: DagsHub/api-clients

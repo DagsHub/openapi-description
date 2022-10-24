@@ -15,6 +15,17 @@ properties:
     type: boolean
     description: Pass true to create an initial commit with README, .gitignore and LICENSE.
     default: false
+  project_template:
+    type: string
+    description: |
+      Choose 'Custom' to set .gitignore, license and readme, or 'None' for a completely empty repository.
+      For other templates you may specify only the license.
+    enum:
+      - Cookiecutter DVC
+      - Custom
+      - None
+      - Jupyter Notebook + DVC
+
   gitignores:
     type: string
     description: Desired language .gitignore templates to apply. Use the name of the templates.

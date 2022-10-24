@@ -18,13 +18,13 @@ properties:
   project_template:
     type: string
     description: |
-      Choose 'Custom' to set .gitignore, license and readme, or 'None' for a completely empty repository.
+      Choose 'custom' to set .gitignore, license and readme, or 'none' for a completely empty repository.
       For other templates you may specify only the license.
     enum:
-      - Cookiecutter DVC
-      - Custom
-      - None
-      - Jupyter Notebook + DVC
+      - cookiecutter-dagshub-dvc
+      - custom
+      - none
+      - notebook-template
 
   gitignores:
     type: string

@@ -46,7 +46,7 @@ jobs:
         uses: ad-m/github-push-action@v0.6.0
         with:
           github_token: ${{ secrets.GITHUB_TOKEN }}
-          branch: update-clients-$GITHUB_RUN_NUMBER.${{ GITHUB_RUN_ATTEMPT-1 }}
+          branch: update-clients-$GITHUB_RUN_NUMBER.$GITHUB_RUN_ATTEMPT
       - name: open PR
         run: |
           curl \

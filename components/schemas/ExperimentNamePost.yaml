@@ -2,5 +2,6 @@ type: object
 properties:
   name:
     type: string
+    example: Awesome Experiment
 required:
   - name

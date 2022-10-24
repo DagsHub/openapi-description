@@ -30,17 +30,31 @@ jobs:
           owner: DagsHub
           repository: api-clients
 
-      - name: Generate clients & open a PR
-        uses: technote-space/create-pr-action@v2.0.4
+      # Runs a set of commands using the runners shell
+      - name: Generate client libraries
+        run: |
+          cd api-clients
+          bash update_clients.sh
+          git checkout -b update-clients-${GITHUB_RUN_NUMBER}.${GITHUB_RUN_ATTEMPT}
+          git add .
+          git config --local user.email "github-actions[bot]@users.noreply.github.com"
+          git config --local user.name "github-actions[bot]"
+          git commit -m "Update api clients"
+      - name: GitHub Push
+        uses: ad-m/github-push-action@v0.6.0
         with:
-          EXECUTE_COMMANDS: |
-           cd api-clients
-           bash update_clients.sh
-          COMMIT_MESSAGE: 'Update api clients'
-          COMMIT_NAME: 'GitHub Actions'
-          COMMIT_EMAIL: 'github-actions[bot]@users.noreply.github.com'
-          PR_BRANCH_NAME: 'update-clients-${PR_ID}'
-          PR_TITLE: 'Update API Clients'
-          PR_BODY: Automated clients update duo to an update in the [docs](https://dagshub.com/DAGsHub-Official/dagshub-docs)
+          github_token: ${{ secrets.PAT }}
+          branch: update-clients-${GITHUB_RUN_NUMBER}.${GITHUB_RUN_ATTEMPT}
+          directory: api-clients
+          repository: DagsHub/api-clients
 
+      - name: Open a PR
+        uses: vsoch/pull-request-action@1.0.21
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          PULL_REQUEST_TOKEN: ${{ secrets.PAT }}
+          PULL_REQUEST_BRANCH: "main"
+          PULL_REQUEST_FROM_BRANCH: update-clients-${GITHUB_RUN_NUMBER}.${GITHUB_RUN_ATTEMPT}
+          PULL_REQUEST_TITLE: 'Update API Clients'
+          PULL_REQUEST_BODY: Automated clients update duo to an update in the [OpenAPI description](https://github.com/DagsHub/openapi-description/)          
     

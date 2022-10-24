@@ -48,7 +48,7 @@ jobs:
           github_token: ${{ secrets.GITHUB_TOKEN }}
           branch: update-clients-$GITHUB_RUN_NUMBER.${{ GITHUB_RUN_ATTEMPT-1 }}
       - name: open PR
-        uses: |
+        run: |
           curl \
           -X POST \
           -H "Accept: application/vnd.github+json" \

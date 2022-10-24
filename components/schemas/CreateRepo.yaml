@@ -25,7 +25,6 @@ properties:
       - custom
       - none
       - notebook-template
-
   gitignores:
     type: string
     description: Desired language .gitignore templates to apply. Use the name of the templates.

@@ -122,7 +122,6 @@ paths:
             application/json:
               schema: 
                 $ref: './components/schemas/Issue.yaml'
-  
   /repos/search:
     get:
       summary: Search repositories

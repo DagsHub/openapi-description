@@ -7,8 +7,6 @@ on:
   # Triggers the workflow on push or pull request events but only for the "main" branch
   push:
     branches: [ "main", "generate-clients-on-spec-change" ]
-  pull_request:
-    branches: [ "main" ]
 
   # Allows you to run this workflow manually from the Actions tab
   workflow_dispatch: 
@@ -48,7 +46,7 @@ jobs:
           github_token: ${{ secrets.GITHUB_TOKEN }}
           branch: update-clients-$GITHUB_RUN_NUMBER.$GITHUB_RUN_ATTEMPT
           directory: api-clients
-          repository: api-clients
+          repository: DagsHub/api-clients
       - name: open PR
         run: |
           curl \

@@ -1,6 +1,6 @@
 # This is a basic workflow to help you get started with Actions
 
-name: CI
+name: Generate API Client Libraries
 
 # Controls when the workflow will run
 on:
@@ -20,7 +20,6 @@ jobs:
 
     # Steps represent a sequence of tasks that will be executed as part of the job
     steps:
-      # Runs a single command using the runners shell
       - name: remove 'api-clients' folder
         run: rm -rf api-clients
 
@@ -30,21 +29,21 @@ jobs:
           owner: DagsHub
           repository: api-clients
 
-      # Runs a set of commands using the runners shell
       - name: Generate client libraries
         run: |
           cd api-clients
           bash update_clients.sh
-          git checkout -b update-clients-${{ github.run_number }}.${{ github.run_attempt }}
+          git checkout -b update-clients-${{ github.run_number }}
           git add .
           git config --local user.email "github-actions[bot]@users.noreply.github.com"
           git config --local user.name "github-actions[bot]"
           git commit -m "Update api clients"
+
       - name: GitHub Push
         uses: ad-m/github-push-action@v0.6.0
         with:
           github_token: ${{ secrets.PAT }}
-          branch: update-clients-${{ github.run_number }}.${{ github.run_attempt }}
+          branch: update-clients-${{ github.run_number }}
           directory: api-clients
           repository: DagsHub/api-clients
 
@@ -54,7 +53,8 @@ jobs:
           PULL_REQUEST_REPOSITORY: DagsHub/api-clients
           PULL_REQUEST_TOKEN: ${{ secrets.PAT }}
           PULL_REQUEST_BRANCH: "main"
-          PULL_REQUEST_FROM_BRANCH: update-clients-${{ github.run_number }}.${{ github.run_attempt }}
+          PULL_REQUEST_FROM_BRANCH: update-clients-${{ github.run_number }}
           PULL_REQUEST_TITLE: 'Update API Clients'
           PULL_REQUEST_BODY: Automated clients update duo to an update in the [OpenAPI description](https://github.com/DagsHub/openapi-description/)          
+          PULL_REQUEST_UPDATE: true
     

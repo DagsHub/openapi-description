@@ -35,7 +35,7 @@ jobs:
         run: |
           cd api-clients
           bash update_clients.sh
-          git checkout -b update-clients-${{GITHUB_RUN_NUMBER}}.${{GITHUB_RUN_ATTEMPT}}
+          git checkout -b update-clients-${{ github.run_number }}.${{ github.run_attempt }}
           git add .
           git config --local user.email "github-actions[bot]@users.noreply.github.com"
           git config --local user.name "github-actions[bot]"
@@ -44,7 +44,7 @@ jobs:
         uses: ad-m/github-push-action@v0.6.0
         with:
           github_token: ${{ secrets.PAT }}
-          branch: update-clients-${{GITHUB_RUN_NUMBER}}.${{GITHUB_RUN_ATTEMPT}}
+          branch: update-clients-${{ github.run_number }}.${{ github.run_attempt }}
           directory: api-clients
           repository: DagsHub/api-clients
 
@@ -54,7 +54,7 @@ jobs:
           PULL_REQUEST_REPOSITORY: DagsHub/api-clients
           PULL_REQUEST_TOKEN: ${{ secrets.PAT }}
           PULL_REQUEST_BRANCH: "main"
-          PULL_REQUEST_FROM_BRANCH: update-clients-${{GITHUB_RUN_NUMBER}}.${{GITHUB_RUN_ATTEMPT}}
+          PULL_REQUEST_FROM_BRANCH: update-clients-${{ github.run_number }}.${{ github.run_attempt }}
           PULL_REQUEST_TITLE: 'Update API Clients'
           PULL_REQUEST_BODY: Automated clients update duo to an update in the [OpenAPI description](https://github.com/DagsHub/openapi-description/)          
     

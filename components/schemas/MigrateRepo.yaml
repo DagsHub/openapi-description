@@ -30,7 +30,7 @@ properties:
   description:
     type: string
     description: Description of the repository
-    example: "..."
+    example: "This is a repository"
 required:
   - clone_addr
   - user_id

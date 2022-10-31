@@ -87,6 +87,46 @@ paths:
       responses:
         '200':
           description: Successfully uploaded content
+  /user:
+    get:
+      tags:
+        - User
+      operationId: GetAuthenticatedUser
+      summary: Get authenticated user information
+      responses:
+        '200':
+          description: successfully retrieved user information
+          content:
+            application/json:
+              example:
+                {
+                  "id": 5,
+                  "login": "Dean",
+                  "full_name": "Dean Pleban",
+                  "avatar_url": "https://dagshub.com/avatars/5",
+                  "username": "Dean"
+                }
+  /users/{username}:
+    get:
+      tags:
+        - User
+      operationId: getUser
+      summary: Get information about a user
+      parameters:
+        - $ref: './components/parameters/Username.yaml'
+      responses:
+        '200':
+          description: successfully retrieved user information
+          content:
+            application/json:
+              example:
+                  {
+                  "id": 5,
+                  "login": "Dean",
+                  "full_name": "Dean Pleban",
+                  "avatar_url": "https://dagshub.com/avatars/5",
+                  "username": "Dean"
+                }
   /repos/{owner}/{repo}/issues:
     parameters:
       - $ref: './components/parameters/Owner.yaml'
@@ -229,6 +269,18 @@ paths:
                     ],
                     "ok": true,
                   }
+  /repos/{username}/{repo}:
+    get:
+      tags:
+        - Repository
+      summary: Get repository information
+      operationId: getRepo
+      parameters:
+        - $ref: './components/parameters/Username.yaml'
+        - $ref: './components/parameters/Repository.yaml'
+      responses:
+        '200':
+          description: repository information successfully retrieved
   /user/repos:  
     get:
       summary: List your repositories

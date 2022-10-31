@@ -17,7 +17,7 @@ properties:
       Otherwise, the request is accepted only if **the tip of the branch is the same as `last_commit`** at the moment of processing the request.
 
       This is done to prevent accidental conflicting changes.
-      To get the latest commit you can use the [branches API](#/Branches/getBranch)
+      To get the latest commit you can use the [branches API](#operations-Branches-getBranch)
   new_branch_name:
     type: string
     example: new-branch

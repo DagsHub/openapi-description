@@ -1,4 +1,7 @@
-type: array
-items:
-  type: string
+type: object
+properties:
+  experiment_keys:
+    type: array
+    items:
+      type: string
 required: true

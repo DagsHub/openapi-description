@@ -27,5 +27,7 @@ properties:
   files:
     type: string
     format: binary
+    description: This property can be sent multiple times to upload multiple files.
+    required: true
 required:
   - commit_message

@@ -9,6 +9,7 @@ info:
    
 servers:
   - url: https://dagshub.com/api/v1/
+  - url: http://localhost:3000/api/v1/
 security:
   - basicAuth: []
   - tokenAuth: []
@@ -304,7 +305,7 @@ paths:
                     }
                   }
                 }
-  /repos/{owner}/{repo}/experiments/experiment/{experimentKey}/name:
+  /repos/{owner}/{repo}/experiments/name/{experimentKey}/{experimentName}:
     post:
       tags:
         - Experiments
@@ -315,19 +316,14 @@ paths:
       - $ref: './components/parameters/Owner.yaml'
       - $ref: './components/parameters/Repository.yaml'
       - $ref: './components/parameters/ExperimentKey.yaml'
-      requestBody:
-        content:
-          application/json:
-            schema:
-              $ref: './components/schemas/ExperimentNamePost.yaml'
+      - $ref: './components/parameters/ExperimentName.yaml'
       responses:
         '200':
           description: Set name for experiment successfully
           content:
             application/json:
-              example:
-                {name: "Awesome Experiment"}
-  /repos/{owner}/{repo}/experiments/labels/{experimentKey}/{label}:
+              example: "Awesome New Experiment Name"
+  /repos/{owner}/{repo}/experiments/labels/{experimentKey}/{experimentLabel}:
     post:
       tags:
         - Experiments
@@ -345,7 +341,9 @@ paths:
           description: "Bad request"
         '200':
           description: Experiment label was added
-
+          content:
+            application/json:
+              example: "Cool New Label"
     delete:
       tags:
         - Experiments
@@ -363,6 +361,9 @@ paths:
           description: "Bad request: experiment label name can be up to 128 characters long."
         '200':
           description: Experiment label was deleted
+          content:
+            application/json:
+              example: []
 
   /repos/search:
     get:

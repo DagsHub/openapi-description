@@ -1,0 +1,6 @@
+name: experimentName
+in: path
+description: A name for the experiment
+required: true
+schema:
+  type: string

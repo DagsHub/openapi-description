@@ -18,7 +18,6 @@ properties:
 
       This is done to prevent accidental conflicting changes.
       To get the latest commit you can use the [branches API](#/Branches/getBranch)
-    example: 79fb7f8632d7e15b3b46a7411d08bcdd
   new_branch_name:
     type: string
     example: new-branch
@@ -31,5 +30,5 @@ properties:
     format: binary
     description: This property can be sent multiple times to upload multiple files.
 required:
-  - commit_message
   - files
+  - commit_choice

@@ -4,7 +4,8 @@ info:
   title: DagsHub API
   version: 1.0.2
   description: |
-    The api docs are made with SwaggerUI using the OpenAPI 3 specification.
+    This API provides a way to retrive & interact with data about DagsHub repositories, users, issues, webhooks and more.
+    The API is also used by the [DagsHub Direct Data Access streaming client](https://github.com/DagsHub/client) to stream content from a repository for easier and faster training.
    
 servers:
   - url: https://dagshub.com/api/v1/
@@ -16,7 +17,7 @@ paths:
     get:
       tags:
       - Content
-      summary: Get data from a folder in repository
+      summary: List data in a repository folder
       description: |
         List files, commit sha1, and versioning type for a folder in repository.
         

@@ -198,7 +198,43 @@ paths:
             application/json:
               schema: 
                 $ref: './components/schemas/Issue.yaml'
-  /experiments/experiment/{experimentKey}/name:
+  /repos/{owner}/{repo}/experiments:
+    get:
+      tags:
+        - Experiments
+      summary: List Experiments
+      description: Get a list of experiments in the given repository
+      operationId: getExperiments
+      parameters:
+        - $ref: './components/parameters/Owner.yaml'
+        - $ref: './components/parameters/Repository.yaml'
+      responses:
+        '200':
+          description: retrieved experiments successfully
+          content:
+            application/json:
+              schema: {} # TODO: write
+  /repos/{owner}/{repo}/experiments/metricsForExperiments:
+    post:
+      tags:
+        - Experiments
+      summary: Get experiment metrics for experiment
+      operationId: getExperimentMetrics
+      parameters:
+      - $ref: './components/parameters/Owner.yaml'
+      - $ref: './components/parameters/Repository.yaml'
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: './components/schemas/ExperimentKeys.yaml'
+      responses:
+        '200':
+          description: Retrieved experiments metrics
+          content:
+            application/json:
+              schema: {} # TODO: idk
+  /repos/{owner}/{repo}/experiments/experiment/{experimentKey}/name:
     post:
       tags:
         - Experiments
@@ -206,6 +242,8 @@ paths:
       description: Set a name for an experiment by experiment key
       operationId: setExperimentName
       parameters:
+      - $ref: './components/parameters/Owner.yaml'
+      - $ref: './components/parameters/Repository.yaml'
       - $ref: './components/parameters/ExperimentKey.yaml'
       requestBody:
         content:
@@ -219,6 +257,42 @@ paths:
             application/json:
               example:
                 {name: "Awesome Experiment"}
+  /repos/{owner}/{repo}/experiments/labels/{experimentKey}/{label}:
+    post:
+      tags:
+        - Experiments
+      summary: Add label to experiment
+      operationId: addExperimentLabel
+      parameters:
+        - $ref: './components/parameters/Owner.yaml'
+        - $ref: './components/parameters/Repository.yaml'
+        - $ref: './components/parameters/ExperimentKey.yaml'
+        - $ref: './components/parameters/ExperimentLabel.yaml'
+      responses:
+        '404':
+          description: Experiment not found
+        '400':
+          description: "Bad request"
+        '200':
+          description: Experiment label was added
+
+    delete:
+      tags:
+        - Experiments
+      summary: Delete experiment label
+      operationId: deleteExperimentLabel
+      parameters:
+        - $ref: './components/parameters/Owner.yaml'
+        - $ref: './components/parameters/Repository.yaml'
+        - $ref: './components/parameters/ExperimentKey.yaml'
+        - $ref: './components/parameters/ExperimentLabel.yaml'
+      responses:
+        '404':
+          description: Label/experiment not found
+        '400':
+          description: "Bad request: experiment label name can be up to 128 characters long."
+        '200':
+          description: Experiment label was deleted
 
   /repos/search:
     get:

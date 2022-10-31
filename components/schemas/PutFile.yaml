@@ -25,9 +25,7 @@ properties:
     enum: [auto, dvc, git]
     example: dvc
   files:
-    type: array
-    items:
-      type: object
-      example: [{"files": {"file1" : "new content"}}]
+    type: string
+    format: binary
 required:
   - commit_message

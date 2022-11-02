@@ -9,6 +9,7 @@ info:
    
 servers:
   - url: https://dagshub.com/api/v1/
+  - url: http://localhost:3000/api/v1/
 security:
   - basicAuth: []
   - tokenAuth: []
@@ -304,7 +305,7 @@ paths:
                     }
                   }
                 }
-  /repos/{owner}/{repo}/experiments/name/{experimentKey}/{experimentName}:
+  /repos/{owner}/{repo}/experiments/experiment/{experimentKey}:
     post:
       tags:
         - Experiments
@@ -315,14 +316,18 @@ paths:
       - $ref: './components/parameters/Owner.yaml'
       - $ref: './components/parameters/Repository.yaml'
       - $ref: './components/parameters/ExperimentKey.yaml'
-      - $ref: './components/parameters/ExperimentName.yaml'
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: './components/schemas/ExperimentNamePost.yaml'
       responses:
         '200':
           description: Set name for experiment successfully
           content:
             application/json:
               example: "Awesome New Experiment Name"
-  /repos/{owner}/{repo}/experiments/labels/{experimentKey}/{experimentLabel}:
+  /repos/{owner}/{repo}/experiments/experiment/{experimentKey}/labels/{experimentLabel}:
     post:
       tags:
         - Experiments

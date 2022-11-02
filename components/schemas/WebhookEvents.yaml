@@ -1,8 +1,7 @@
 type: array
 description: Determines what events the hook is triggered format.
 items:
-  schema:
-    type: string
+  type: string
 default: 
   - push
 example:

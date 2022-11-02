@@ -4,4 +4,5 @@ properties:
     type: array
     items:
       type: string
-required: true
+required: 
+  - experiment_keys

@@ -8,7 +8,7 @@ info:
     The API is also used by the [DagsHub Direct Data Access streaming client](https://github.com/DagsHub/client) to stream content from a repository for easier and faster training.
    
 servers:
-  - url: https://dagshub.com/api/v1/
+  - url: https://dagshub.com/api/v1
 security:
   - basicAuth: []
   - tokenAuth: []
@@ -719,6 +719,10 @@ paths:
       tags:
         - Collaborators
       summary: Delete collaborator
+      parameters:
+        - $ref: './components/parameters/Username.yaml'
+        - $ref: './components/parameters/Repository.yaml'
+        - $ref: './components/parameters/Collaborator.yaml'
       operationId: removeCollaborator
       responses:
         '204':
@@ -811,24 +815,6 @@ paths:
                   },
                   "experiment": null
                 }
-  /repos/{owner}/{repo}/commits/{ref}:
-    get:
-      tags:
-        - Commits
-      operationId: getCommitSha1
-      summary: Get the SHA-1 of a commit reference
-      parameters:
-        - $ref: './components/parameters/Owner.yaml'
-        - $ref: './components/parameters/Repository.yaml'
-        - $ref: './components/parameters/Ref.yaml'
-      responses:
-        '200':
-          description: OK
-          content:
-            application/json:
-              example: dc20792485ffd49b0bca49f90a8d44a16241b84a
-              schema:
-                type: string      
   /repos/{owner}/{repo}/releases:
     get:
       tags:

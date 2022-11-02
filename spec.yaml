@@ -308,9 +308,9 @@ paths:
     post:
       tags:
         - Experiments
-      summary: Set name for experiment
-      description: Set a name for an experiment by experiment key
-      operationId: setExperimentName
+      summary: Edit experiment info
+      description: Edit experiment info, currently supports just changing experiment name.
+      operationId: editExperiment
       parameters:
       - $ref: './components/parameters/Owner.yaml'
       - $ref: './components/parameters/Repository.yaml'
@@ -319,10 +319,10 @@ paths:
         content:
           application/json:
             schema:
-              $ref: './components/schemas/ExperimentNamePost.yaml'
+              $ref: './components/schemas/EditExperimentPost.yaml'
       responses:
         '200':
-          description: Set name for experiment successfully
+          description: Edit experiment info successfully
           content:
             application/json:
               example: "Awesome New Experiment Name"

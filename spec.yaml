@@ -9,7 +9,6 @@ info:
    
 servers:
   - url: https://dagshub.com/api/v1/
-  - url: http://localhost:3000/api/v1/
 security:
   - basicAuth: []
   - tokenAuth: []

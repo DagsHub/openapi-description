@@ -1,0 +1,6 @@
+name: experimentKey
+in: path
+description: a valid experiment key
+required: true
+schema:
+  type: string

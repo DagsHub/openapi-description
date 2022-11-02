@@ -1,0 +1,6 @@
+name: experimentLabel
+in: path
+description: A label for the experiment, max 128 characters.
+required: true
+schema:
+  type: string

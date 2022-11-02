@@ -198,6 +198,176 @@ paths:
             application/json:
               schema: 
                 $ref: './components/schemas/Issue.yaml'
+  /repos/{owner}/{repo}/experiments:
+    get:
+      tags:
+        - Experiments
+      summary: List Experiments
+      description: Get a list of experiments in the given repository
+      operationId: getExperiments
+      parameters:
+        - $ref: './components/parameters/Owner.yaml'
+        - $ref: './components/parameters/Repository.yaml'
+      responses:
+        '200':
+          description: retrieved experiments successfully
+          content:
+            application/json:
+              example:
+                {
+                  "experiments": {
+                    "2301": {
+                      "ID": "2301",
+                      "RepoID": 74,
+                      "CommitID": "6cdbe879ecf2adbfff2631d90b27de6569c0fc2a",
+                      "TimeUnixMs": 1595149314000,
+                      "Tags": {
+                        "CommitAuthorName": "Martin Daniel",
+                        "CommitAuthorTimestampUnixSec": 1595149314,
+                        "CommitCommitterName": "Martin Daniel",
+                        "CommitCommitterTimestampUnixSec": 1595149314,
+                        "CommitMessage": "Change parameters\n"
+                      },
+                      "Name": "",
+                      "MetricsByPath": {
+                        "metrics.csv": {
+                          "LatestByName": {
+                          "test__accuracy": {
+                            "ExperimentID": "2301",
+                            "Name": "test__accuracy",
+                            "Value": 0.91712,
+                            "Timestamp": 1595149274803,
+                            "Step": 1,
+                            "ValueStr": "0.91712",
+                            "Path": "metrics.csv",
+                            "IsInvalidFloat": false
+                            },
+                          }
+                        }
+                      },
+                      "HyperParamsByPath": {
+                        "params.yml": [
+                          {
+                            "ExperimentID": 2301,
+                            "Name": "tfidf__max_df",
+                            "Value": "1",
+                            "Path": "params.yml"
+                          }, 
+                        ]
+                      },
+                      "Labels": [],
+                      "Errors": [],
+                      "Source": "git",
+                      "Group": ""
+                    },
+                  }
+                }
+  /repos/{owner}/{repo}/experiments/metricsForExperiments:
+    post:
+      tags:
+        - Experiments
+      summary: Get experiment metrics for experiment
+      operationId: getExperimentMetrics
+      parameters:
+      - $ref: './components/parameters/Owner.yaml'
+      - $ref: './components/parameters/Repository.yaml'
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: './components/schemas/ExperimentKeys.yaml'
+      responses:
+        '200':
+          description: Retrieved experiments metrics
+          content:
+            application/json:
+              example:
+                {
+                  "2306": {
+                    "metrics.csv": {
+                    "test__accuracy": [
+                      {
+                      "Value": 0.91712,
+                      "Timestamp": 1595149274803,
+                      "Step": 1,
+                      "ValueStr": "0.91712"
+                      }
+                    ],
+                    "train__roc_auc": [
+                      {
+                      "Value": 0.9997316690244479,
+                      "Timestamp": 1595149273838,
+                      "Step": 1,
+                      "ValueStr": "0.9997316690244479"
+                      }
+                    ]
+                    }
+                  }
+                }
+  /repos/{owner}/{repo}/experiments/experiment/{experimentKey}:
+    post:
+      tags:
+        - Experiments
+      summary: Edit experiment info
+      description: Edit experiment info, currently supports just changing experiment name.
+      operationId: editExperiment
+      parameters:
+      - $ref: './components/parameters/Owner.yaml'
+      - $ref: './components/parameters/Repository.yaml'
+      - $ref: './components/parameters/ExperimentKey.yaml'
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: './components/schemas/EditExperimentPost.yaml'
+      responses:
+        '200':
+          description: Edit experiment info successfully
+          content:
+            application/json:
+              example: "Awesome New Experiment Name"
+  /repos/{owner}/{repo}/experiments/experiment/{experimentKey}/labels/{experimentLabel}:
+    post:
+      tags:
+        - Experiments
+      summary: Add label to experiment
+      operationId: addExperimentLabel
+      parameters:
+        - $ref: './components/parameters/Owner.yaml'
+        - $ref: './components/parameters/Repository.yaml'
+        - $ref: './components/parameters/ExperimentKey.yaml'
+        - $ref: './components/parameters/ExperimentLabel.yaml'
+      responses:
+        '404':
+          description: Experiment not found
+        '400':
+          description: "Bad request"
+        '200':
+          description: Experiment label was added
+          content:
+            application/json:
+              example: "Cool New Label"
+    delete:
+      tags:
+        - Experiments
+      summary: Delete experiment label
+      operationId: deleteExperimentLabel
+      parameters:
+        - $ref: './components/parameters/Owner.yaml'
+        - $ref: './components/parameters/Repository.yaml'
+        - $ref: './components/parameters/ExperimentKey.yaml'
+        - $ref: './components/parameters/ExperimentLabel.yaml'
+      responses:
+        '404':
+          description: Label/experiment not found
+        '400':
+          description: "Bad request: experiment label name can be up to 128 characters long."
+        '200':
+          description: Experiment label was deleted
+          content:
+            application/json:
+              example: []
+
   /repos/search:
     get:
       summary: Search repositories

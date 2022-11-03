@@ -1,5 +1,5 @@
 name: owner
-example: DAGsHub-Official
+example: OperationSavta
 in: path
 description: owner of the repository
 required: true

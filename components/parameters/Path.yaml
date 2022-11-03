@@ -3,3 +3,4 @@ in: path
 description: path of a folder in the repository
 schema:
   type: string
+  default: "."

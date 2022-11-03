@@ -1,5 +1,5 @@
 name: repo
-example: dagshub-docs
+example: SavtaDepth
 in: path
 description: name of the repository
 required: true

@@ -1,5 +1,5 @@
 name: username
-example: nirbarazida
+example: Dean
 in: path
 description: A DagsHub username
 required: true

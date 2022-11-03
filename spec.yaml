@@ -440,14 +440,14 @@ paths:
                     ],
                     "ok": true,
                   }
-  /repos/{username}/{repo}:
+  /repos/{owner}/{repo}:
     get:
       tags:
         - Repository
       summary: Get repository information
       operationId: getRepo
       parameters:
-        - $ref: './components/parameters/Username.yaml'
+        - $ref: './components/parameters/Owner.yaml'
         - $ref: './components/parameters/Repository.yaml'
       responses:
         '200':
@@ -579,7 +579,7 @@ paths:
       responses:
         '201': 
           description: Created
-  /repos/{username}/{repo}/raw/{ref}/{path}:
+  /repos/{owner}/{repo}/raw/{ref}/{path}:
     get:
       tags:
         - Content
@@ -587,7 +587,7 @@ paths:
       description: This method returns the raw content of a file.
       operationId: getRaw
       parameters:
-        - $ref: './components/parameters/Username.yaml'
+        - $ref: './components/parameters/Owner.yaml'
         - $ref: './components/parameters/Repository.yaml'
         - $ref: './components/parameters/Ref.yaml'
         - name: path
@@ -599,7 +599,7 @@ paths:
       responses:
         '200':
           description: OK
-  /repos/{username}/{repo}/archive/{ref}{format}:
+  /repos/{owner}/{repo}/archive/{ref}{format}:
     get:
       tags:
         - Content
@@ -607,7 +607,7 @@ paths:
       description: This method returns archive by given format.
       operationId: getArchive
       parameters:
-        - $ref: './components/parameters/Username.yaml'
+        - $ref: './components/parameters/Owner.yaml'
         - $ref: './components/parameters/Repository.yaml'
         - $ref: './components/parameters/Ref.yaml'
         - name: format
@@ -692,14 +692,14 @@ paths:
                       }
                   }
                 }
-  /repos/{username}/{repo}/collaborators/{collaborator}:
+  /repos/{owner}/{repo}/collaborators/{collaborator}:
     put:
       tags:
         - Collaborators
       summary: Add user as a collaborator
       operationId: addCollaborator
       parameters:
-        - $ref: './components/parameters/Username.yaml'
+        - $ref: './components/parameters/Owner.yaml'
         - $ref: './components/parameters/Repository.yaml'
         - $ref: './components/parameters/Collaborator.yaml'
       requestBody:
@@ -720,7 +720,7 @@ paths:
         - Collaborators
       summary: Delete collaborator
       parameters:
-        - $ref: './components/parameters/Username.yaml'
+        - $ref: './components/parameters/Owner.yaml'
         - $ref: './components/parameters/Repository.yaml'
         - $ref: './components/parameters/Collaborator.yaml'
       operationId: removeCollaborator
@@ -731,14 +731,14 @@ paths:
           description: User does not exist
         '500':
           description: Internal error
-  /repos/{username}/{repo}/collaborators:
+  /repos/{owner}/{repo}/collaborators:
     get:
       tags:
         - Collaborators
       summary: Get collaborators
       operationId: getCollaborators
       parameters:
-        - $ref: './components/parameters/Username.yaml'
+        - $ref: './components/parameters/Owner.yaml'
         - $ref: './components/parameters/Repository.yaml'
       responses:
         '200':

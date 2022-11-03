@@ -599,7 +599,7 @@ paths:
       responses:
         '200':
           description: OK
-  /repos/{username}/{repo}/archive/{ref}/{format}:
+  /repos/{username}/{repo}/archive/{ref}{format}:
     get:
       tags:
         - Content

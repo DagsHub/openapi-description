@@ -1,7 +1,7 @@
 name: username
 example: Dean
 in: path
-description: A DagsHub username
+description: A DagsHub username or organization name
 required: true
 schema:
   type: string

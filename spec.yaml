@@ -91,7 +91,6 @@ paths:
       responses:
         '200':
           description: Successfully uploaded content
-
   /repos/{owner}/{repo}/storage:
     get:
       tags:
@@ -116,7 +115,6 @@ paths:
                     "list_path": "https://dagshub.com/api/v1/repos/Simon/baby-yoda-segmentation/dataset/storage/content/s3/bucket/prefix"
                   }
                 ]
-
   /repos/{owner}/{repo}/storage/content/{protocol}/{bucket}/{path}: 
     get:
       tags:
@@ -128,7 +126,6 @@ paths:
         in: query
         schema:
           type: boolean
-
       - $ref: './components/parameters/Owner.yaml'
       - $ref: './components/parameters/Repository.yaml'
       - $ref: './components/parameters/StorageProtocol.yaml'
@@ -173,8 +170,6 @@ paths:
                   ]
         '404':
           description: Folder or file not found
-
-
   /repos/{owner}/{repo}/storage/raw/{protocol}/{bucket}/{path}: 
     get:
       tags:
@@ -197,8 +192,6 @@ paths:
           description: File downloaded
         '404':
           description: File not found
-
-
 
   /user:
     get:

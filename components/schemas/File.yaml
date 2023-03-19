@@ -22,6 +22,7 @@ properties:
     enum:
       - git
       - dvc
+      - bucket
     example: dvc
   download_url:
     type: string

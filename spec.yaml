@@ -21,7 +21,7 @@ paths:
       description: |
         List files, commit sha1, and versioning type for a folder in repository.
         
-        To get sizes add to the query param `include_size=true`. May result slower response.
+        To get sizes add to the query param `include_size=true`. May result in a slower response.
       operationId: getContent
       parameters:
       - $ref: './components/parameters/Owner.yaml'
@@ -36,7 +36,7 @@ paths:
           default: false
       responses:
         '200': 
-          description: Successfully retrived the data
+          description: Successfully retrieved the data
           content:
             application/json:
               schema:
@@ -88,6 +88,112 @@ paths:
       responses:
         '200':
           description: Successfully uploaded content
+
+  /repos/{owner}/{repo}/storage:
+    get:
+      tags:
+        - Storage Integrations
+      summary: List integrated storages in the repository
+      operationId: getBuckets
+      responses:
+        '200':
+          description: Successfully listed integrated storages
+          content:
+            application/json:
+              schema:
+                $ref: './components/schemas/StorageIntegration.yaml'
+              example:
+                [
+                  {
+                    "name": "bucket/prefix",
+                    "protocol": "s3",
+                    "list_path": "https://dagshub.com/Simon/baby-yoda-segmentation/dataset/storage/content/s3/bucket/prefix"
+                  }
+                ]
+
+  /repos/{owner}/{repo}/storage/content/{protocol}/{bucket}/{path}: 
+    get:
+      tags:
+        - Storage Integrations
+      summary: List contents in the path
+      operationId: getBucketContent
+      parameters:
+      - name: include_size
+        in: query
+        schema:
+          type: boolean
+
+      - $ref: './components/parameters/Owner.yaml'
+      - $ref: './components/parameters/Repository.yaml'
+      - $ref: './components/parameters/StorageProtocol.yaml'
+      - $ref: './components/parameters/StorageBucket.yaml'
+      - $ref: './components/parameters/Path.yaml'
+      responses:
+        '200':
+          description: Successfully listed a directory
+          content:
+            application/json:
+              schema:
+                $ref: './components/schemas/Files.yaml'
+              example:
+                  [
+                    {
+                      "path": "images/000.png",
+                      "type": "file",
+                      "size": 0,
+                      "hash": "79fb7f8632d7e15b3b46a7411d08bcdd",
+                      "versioning": "bucket",
+                      "download_url": "https://dagshub.com/Simon/baby-yoda-segmentation-dataset/storage/raw/s3/bucket/images/000.png",
+                      "content_url":"https://dagshub.com/Simon/baby-yoda-segmentation-dataset/storage/content/s3/bucket/images/000.png" 
+                    },
+                    {
+                      "path": "images/001.png",
+                      "type": "file",
+                      "size": 0,
+                      "hash": "7dd5befce39375036da253b435e1db98",
+                      "versioning": "bucket",
+                      "download_url": "https://dagshub.com/Simon/baby-yoda-segmentation-dataset/storage/raw/s3/bucket/images/001.png",
+                      "content_url":"https://dagshub.com/Simon/baby-yoda-segmentation-dataset/storage/content/s3/bucket/images/001.png" 
+                    },
+                    {
+                      "path": "images/002.png",
+                      "type": "file",
+                      "size": 0,
+                      "hash": "a58f181cd982a1e21c77949588737c8b",
+                      "versioning": "bucket",
+                      "download_url": "https://dagshub.com/Simon/baby-yoda-segmentation-dataset/storage/raw/s3/bucket/images/002.png",
+                      "content_url":"https://dagshub.com/Simon/baby-yoda-segmentation-dataset/storage/content/s3/bucket/images/002.png" 
+                    },
+                  ]
+        '404':
+          description: Folder or file not found
+
+
+  /repos/{owner}/{repo}/storage/raw/{protocol}/{bucket}/{path}: 
+    get:
+      tags:
+        - Storage Integrations
+      summary: Get file in the bucket
+      operationId: getBucketFile
+      parameters:
+      - $ref: './components/parameters/Owner.yaml'
+      - $ref: './components/parameters/Repository.yaml'
+      - $ref: './components/parameters/StorageProtocol.yaml'
+      - $ref: './components/parameters/StorageBucket.yaml'
+      - name: path
+        in: path
+        required: true
+        description: The content path
+        schema: 
+          type: string
+      responses:
+        '200':
+          description: File downloaded
+        '404':
+          description: File not found
+
+
+
   /user:
     get:
       tags:

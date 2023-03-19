@@ -1,0 +1,7 @@
+name: protocol
+in: path
+required: true
+description: protocol of the storage integration
+example: gs
+schema:
+  type: string

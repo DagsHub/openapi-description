@@ -49,8 +49,8 @@ paths:
                       "size": 0,
                       "hash": "79fb7f8632d7e15b3b46a7411d08bcdd",
                       "versioning": "dvc",
-                      "download_url": "https://dagshub.com/Simon/baby-yoda-segmentation-dataset/raw/master/images/000.png",
-                      "content_url": "https://dagshub.com/Simon/baby-yoda-segmentation-dataset/content/master/images/000.png"
+                      "download_url": "https://dagshub.com/api/v1/repos/Simon/baby-yoda-segmentation-dataset/raw/master/images/000.png",
+                      "content_url": "https://dagshub.com/api/v1/repos/Simon/baby-yoda-segmentation-dataset/content/master/images/000.png"
                     },
                     {
                       "path": "images/001.png",
@@ -58,8 +58,8 @@ paths:
                       "size": 0,
                       "hash": "7dd5befce39375036da253b435e1db98",
                       "versioning": "dvc",
-                      "download_url": "https://dagshub.com/Simon/baby-yoda-segmentation-dataset/raw/master/images/001.png",
-                      "content_url": "https://dagshub.com/Simon/baby-yoda-segmentation-dataset/content/master/images/001.png"
+                      "download_url": "https://dagshub.com/api/v1/repos/Simon/baby-yoda-segmentation-dataset/raw/master/images/001.png",
+                      "content_url": "https://dagshub.com/api/v1/repos/Simon/baby-yoda-segmentation-dataset/content/master/images/001.png"
                     },
                     {
                       "path": "images/002.png",
@@ -67,8 +67,8 @@ paths:
                       "size": 0,
                       "hash": "a58f181cd982a1e21c77949588737c8b",
                       "versioning": "dvc",
-                      "download_url": "https://dagshub.com/Simon/baby-yoda-segmentation-dataset/raw/master/images/002.png",
-                      "content_url": "https://dagshub.com/Simon/baby-yoda-segmentation-dataset/content/master/images/002.png"
+                      "download_url": "https://dagshub.com/api/v1/repos/Simon/baby-yoda-segmentation-dataset/raw/master/images/002.png",
+                      "content_url": "https://dagshub.com/api/v1/repos/Simon/baby-yoda-segmentation-dataset/content/master/images/002.png"
                     },
                   ]
         '404':
@@ -113,7 +113,7 @@ paths:
                   {
                     "name": "bucket/prefix",
                     "protocol": "s3",
-                    "list_path": "https://dagshub.com/Simon/baby-yoda-segmentation/dataset/storage/content/s3/bucket/prefix"
+                    "list_path": "https://dagshub.com/api/v1/repos/Simon/baby-yoda-segmentation/dataset/storage/content/s3/bucket/prefix"
                   }
                 ]
 
@@ -149,8 +149,8 @@ paths:
                       "size": 0,
                       "hash": "79fb7f8632d7e15b3b46a7411d08bcdd",
                       "versioning": "bucket",
-                      "download_url": "https://dagshub.com/Simon/baby-yoda-segmentation-dataset/storage/raw/s3/bucket/images/000.png",
-                      "content_url":"https://dagshub.com/Simon/baby-yoda-segmentation-dataset/storage/content/s3/bucket/images/000.png" 
+                      "download_url": "https://dagshub.com/api/v1/repos/Simon/baby-yoda-segmentation-dataset/storage/raw/s3/bucket/images/000.png",
+                      "content_url":"https://dagshub.com/api/v1/repos/Simon/baby-yoda-segmentation-dataset/storage/content/s3/bucket/images/000.png" 
                     },
                     {
                       "path": "images/001.png",
@@ -158,8 +158,8 @@ paths:
                       "size": 0,
                       "hash": "7dd5befce39375036da253b435e1db98",
                       "versioning": "bucket",
-                      "download_url": "https://dagshub.com/Simon/baby-yoda-segmentation-dataset/storage/raw/s3/bucket/images/001.png",
-                      "content_url":"https://dagshub.com/Simon/baby-yoda-segmentation-dataset/storage/content/s3/bucket/images/001.png" 
+                      "download_url": "https://dagshub.com/api/v1/repos/Simon/baby-yoda-segmentation-dataset/storage/raw/s3/bucket/images/001.png",
+                      "content_url":"https://dagshub.com/api/v1/repos/Simon/baby-yoda-segmentation-dataset/storage/content/s3/bucket/images/001.png" 
                     },
                     {
                       "path": "images/002.png",
@@ -167,8 +167,8 @@ paths:
                       "size": 0,
                       "hash": "a58f181cd982a1e21c77949588737c8b",
                       "versioning": "bucket",
-                      "download_url": "https://dagshub.com/Simon/baby-yoda-segmentation-dataset/storage/raw/s3/bucket/images/002.png",
-                      "content_url":"https://dagshub.com/Simon/baby-yoda-segmentation-dataset/storage/content/s3/bucket/images/002.png" 
+                      "download_url": "https://dagshub.com/api/v1/repos/Simon/baby-yoda-segmentation-dataset/storage/raw/s3/bucket/images/002.png",
+                      "content_url":"https://dagshub.com/api/v1/repos/Simon/baby-yoda-segmentation-dataset/storage/content/s3/bucket/images/002.png" 
                     },
                   ]
         '404':

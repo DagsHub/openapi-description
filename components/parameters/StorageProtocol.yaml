@@ -5,3 +5,4 @@ description: protocol of the storage integration
 example: gs
 schema:
   type: string
+  enum: [gs, s3]

@@ -3,9 +3,12 @@ items:
   - type: object
     properties:
       name:
-        $ref: "../parameters/StorageBucket.yaml"
+        type: string
+        description: Name/path of the bucket
       protocol:
-        $ref: "../parameters/StorageProtocol.yaml"
+        type: string
+        enum: [s3, gs]
+        description: Protocol used by the integration
       list_path:
         type: string
         description: URL to list the root of this bucket

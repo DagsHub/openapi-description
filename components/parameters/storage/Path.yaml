@@ -1,6 +1,6 @@
 name: path
 in: path
-description: path of a folder in the bucket
+description: path of a folder or file in the bucket
 schema:
   type: string
   default: "."

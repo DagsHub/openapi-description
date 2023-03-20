@@ -2,7 +2,7 @@ name: protocol
 in: path
 required: true
 description: protocol of the storage integration
-example: gs
+example: s3
 schema:
   type: string
   enum: [gs, s3]

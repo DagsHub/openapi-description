@@ -101,7 +101,7 @@ paths:
           content:
             application/json:
               schema:
-                $ref: './components/schemas/StorageIntegration.yaml'
+                $ref: './components/schemas/storage/StorageIntegration.yaml'
               example:
                 [
                   {

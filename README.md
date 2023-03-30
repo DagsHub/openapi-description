@@ -1,4 +1,4 @@
-# DagsHub Swagger API definitions
+# DagsHub OpenAPI 3.0 definition
 
 ## Dev instruction if you need to change the API:
 

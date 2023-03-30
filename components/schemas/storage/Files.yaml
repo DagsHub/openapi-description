@@ -1,0 +1,10 @@
+type: object
+properties:
+  entries:
+    type: array
+    items: 
+      $ref: './../File.yaml'
+  limit:
+    type: integer
+  next_token: 
+    type: string

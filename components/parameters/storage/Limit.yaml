@@ -1,0 +1,6 @@
+name: limit
+in: query
+description: Maximum amount of items to return
+schema:
+  type: integer
+  default: 100

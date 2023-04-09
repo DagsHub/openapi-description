@@ -28,7 +28,5 @@ jobs:
         with:
           node-version: 16
       - run: npm i -g @redocly/cli@latest
-      - name: Bundle OpenAPI spec
-        run: redocly bundle spec.yaml --output bundled.yaml
-      - name: Lint bundled spec
-        run: redocly lint bundled.yaml
+      - name: Lint OpenAPI spec
+        run: redocly lint spec.yaml

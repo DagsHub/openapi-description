@@ -22,7 +22,11 @@ properties:
     enum:
       - git
       - dvc
+      - bucket
     example: dvc
   download_url:
     type: string
     example: https://dagshub.com/Simon/baby-yoda-segmentation-dataset/raw/master/images/000.png
+  content_url:
+    type: string
+    example: https://dagshub.com/Simon/baby-yoda-segmentation-dataset/content/master/images/000.png

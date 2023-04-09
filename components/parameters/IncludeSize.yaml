@@ -1,0 +1,6 @@
+name: include_size
+in: query
+required: false
+schema:
+  type: boolean
+  default: false

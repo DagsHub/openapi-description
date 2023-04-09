@@ -23,7 +23,7 @@ properties:
     example: new-branch
   versioning:
     type: string
-    enum: [auto, dvc, git]
+    enum: [auto, dvc, git, bucket]
     default: auto
   files:
     type: string

@@ -1,0 +1,7 @@
+name: bucket
+in: path
+required: true
+description: name and prefix of the bucket integration
+example: spacenet-dataset
+schema:
+  type: string

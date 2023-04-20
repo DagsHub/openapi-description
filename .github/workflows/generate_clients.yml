@@ -32,6 +32,7 @@ jobs:
       - name: Generate client libraries
         run: |
           cd api-clients
+          git pull
           bash update_clients.sh
           git checkout -b update-clients-${{ github.run_number }}
           git add .

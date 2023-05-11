@@ -474,6 +474,22 @@ paths:
           content:
             application/json:
               example: "Awesome New Experiment Name"
+    delete: 
+      tags:
+        - Experiments
+      summary: Delete experiment
+      description: Support both git and MLflow experiments
+      operationId: deleteExperiment
+      parameters: 
+      - $ref: './components/parameters/Owner.yaml'
+      - $ref: './components/parameters/Repository.yaml'
+      - $ref: './components/parameters/ExperimentKey.yaml'
+      responses: 
+        '200':
+          description: Deleted experiment successfully
+        '404':
+          description: Experiment not found
+
   /repos/{owner}/{repo}/experiments/experiment/{experimentKey}/labels/{experimentLabel}:
     post:
       tags:

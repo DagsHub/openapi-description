@@ -1,5 +1,5 @@
 name: from_token
 in: query
-description: Token, from which to continue iteration
+description: "[Only if paging is enabled] token, from which to continue iteration"
 schema:
   type: string

@@ -124,6 +124,7 @@ paths:
       - $ref: './components/parameters/storage/Path.yaml'
       - $ref: './components/parameters/IncludeSize.yaml'
       - $ref: './components/parameters/storage/Limit.yaml'
+      - $ref: './components/parameters/storage/Paging.yaml'
       - $ref: './components/parameters/storage/FromToken.yaml'
       responses:
         '200':
@@ -208,8 +209,7 @@ paths:
                       "content_url": "https://dagshub.com/api/v1/repos/DagsHub-Datasets/spacenet-dataset/storage/content/s3/spacenet-dataset/LICENSE.md"
                     }
                   ],
-                  "limit": 8,
-                  "next_token": ""
+                  "next_token": "next-token"
                 }
         '404':
           description: Folder or file not found

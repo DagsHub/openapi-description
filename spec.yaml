@@ -341,8 +341,6 @@ paths:
           description: Deleted experiment successfully
         '404':
           description: Experiment not found
-        '500':
-          description: Internal server error. Please reach out on our Discord server.
 
   /repos/{owner}/{repo}/experiments/experiment/{experimentKey}/labels/{experimentLabel}:
     post:

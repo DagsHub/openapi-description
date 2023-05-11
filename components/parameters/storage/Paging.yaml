@@ -1,6 +1,6 @@
 name: paging
 in: query
-description: Enable paging
+description: Whether or not paging is enabled
 example: false
 schema:
   type: boolean

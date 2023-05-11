@@ -1,0 +1,7 @@
+name: paging
+in: query
+description: Whether or not paging is enabled
+example: false
+schema:
+  type: boolean
+  default: false

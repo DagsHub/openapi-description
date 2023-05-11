@@ -4,7 +4,6 @@ properties:
     type: array
     items: 
       $ref: './../File.yaml'
-  limit:
-    type: integer
   next_token: 
+    description: "Next token to continue pagination from"
     type: string

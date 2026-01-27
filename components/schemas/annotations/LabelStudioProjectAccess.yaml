@@ -1,0 +1,29 @@
+type: object
+properties:
+  id:
+    type: integer
+    format: int64
+  repo_id:
+    type: integer
+    format: int64
+  project_id:
+    type: integer
+    format: int64
+    description: Project ID, -1 means wildcard access to all projects
+  user_id:
+    type: integer
+    format: int64
+    description: User ID (present for user access entries)
+  team_id:
+    type: integer
+    format: int64
+    description: Team ID (present for team access entries)
+  access_level:
+    type: string
+    enum: [none, annotator]
+  created_unix:
+    type: integer
+    format: int64
+  user:
+    $ref: '../User.yaml'
+    description: User details when user_id is set

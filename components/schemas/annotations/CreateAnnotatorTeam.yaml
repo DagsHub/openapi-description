@@ -1,0 +1,21 @@
+type: object
+required:
+  - name
+properties:
+  name:
+    type: string
+    description: Team name
+    example: Data Annotators
+  description:
+    type: string
+    description: Team description
+    example: Team for annotation work
+  team_type:
+    type: string
+    enum: [normal, annotator]
+    default: normal
+    description: Type of team - normal teams have repository access, annotator teams only have annotation project access
+  permission:
+    type: string
+    enum: [read, write, admin]
+    description: Repository permission level (required for normal teams, ignored for annotator teams)

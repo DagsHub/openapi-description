@@ -2,7 +2,7 @@
 openapi: 3.0.3
 info:
   title: DagsHub API
-  version: 1.0.2
+  version: 1.0.3
   description: |
     This API provides a way to retrive & interact with data about DagsHub repositories, users, issues, webhooks and more.
     The API is also used by the [DagsHub Direct Data Access streaming client](https://github.com/DagsHub/client) to stream content from a repository for easier and faster training.
@@ -925,6 +925,180 @@ paths:
                     }
                   }
                 ]
+  /repos/{owner}/{repo}/annotations/access/users:
+    parameters:
+      - $ref: './components/parameters/Owner.yaml'
+      - $ref: './components/parameters/Repository.yaml'
+    get:
+      tags:
+        - Annotations
+      summary: List user access entries for annotation projects
+      description: Get a list of users with access to Label Studio annotation projects in the repository
+      operationId: listLabelStudioUserAccess
+      parameters:
+        - $ref: './components/parameters/annotations/ProjectId.yaml'
+      responses:
+        '200':
+          description: Successfully retrieved user access entries
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: './components/schemas/annotations/LabelStudioProjectAccess.yaml'
+  /repos/{owner}/{repo}/annotations/access/users/{userid}:
+    parameters:
+      - $ref: './components/parameters/Owner.yaml'
+      - $ref: './components/parameters/Repository.yaml'
+      - $ref: './components/parameters/annotations/UserId.yaml'
+    get:
+      tags:
+        - Annotations
+      summary: Get user access level for annotation projects
+      description: Get the access level for a specific user and project (or all projects)
+      operationId: getLabelStudioUserAccess
+      parameters:
+        - $ref: './components/parameters/annotations/ProjectId.yaml'
+      responses:
+        '200':
+          description: Successfully retrieved user access level
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  user_id:
+                    type: integer
+                    format: int64
+                  project_id:
+                    type: integer
+                    format: int64
+                  access_level:
+                    type: string
+                    enum: [none, annotator]
+    put:
+      tags:
+        - Annotations
+      summary: Grant user access to annotation projects
+      description: Grant a user access to specific Label Studio annotation projects. User must be an organization member if the repo is owned by an organization.
+      operationId: grantLabelStudioUserAccess
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: './components/schemas/annotations/GrantLabelStudioAccess.yaml'
+      responses:
+        '204':
+          description: Access granted successfully
+        '400':
+          description: User must be a member of the organization which owns the repo
+        '404':
+          description: User not found
+    delete:
+      tags:
+        - Annotations
+      summary: Revoke user access to annotation projects
+      description: Revoke a user's access to Label Studio annotation projects
+      operationId: revokeLabelStudioUserAccess
+      parameters:
+        - $ref: './components/parameters/annotations/ProjectId.yaml'
+      responses:
+        '204':
+          description: Access revoked successfully
+        '404':
+          description: User not found
+  /repos/{owner}/{repo}/annotations/access/teams:
+    parameters:
+      - $ref: './components/parameters/Owner.yaml'
+      - $ref: './components/parameters/Repository.yaml'
+    get:
+      tags:
+        - Annotations
+      summary: List team access entries for annotation projects
+      description: Get a list of teams with access to Label Studio annotation projects in the repository (organization repositories only)
+      operationId: listLabelStudioTeamAccess
+      parameters:
+        - $ref: './components/parameters/annotations/ProjectId.yaml'
+      responses:
+        '200':
+          description: Successfully retrieved team access entries
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: './components/schemas/annotations/LabelStudioProjectAccess.yaml'
+  /repos/{owner}/{repo}/annotations/access/teams/{teamid}:
+    parameters:
+      - $ref: './components/parameters/Owner.yaml'
+      - $ref: './components/parameters/Repository.yaml'
+      - $ref: './components/parameters/annotations/TeamId.yaml'
+    get:
+      tags:
+        - Annotations
+      summary: Get team access level for annotation projects
+      description: Get the access level for a specific team and project (or all projects)
+      operationId: getLabelStudioTeamAccess
+      parameters:
+        - $ref: './components/parameters/annotations/ProjectId.yaml'
+      responses:
+        '200':
+          description: Successfully retrieved team access level
+          content:
+            application/json:
+              schema:
+                $ref: './components/schemas/annotations/LabelStudioProjectAccess.yaml'
+    put:
+      tags:
+        - Annotations
+      summary: Grant team access to annotation projects
+      description: Grant a team access to specific Label Studio annotation projects (organization repositories only)
+      operationId: grantLabelStudioTeamAccess
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: './components/schemas/annotations/GrantLabelStudioAccess.yaml'
+      responses:
+        '204':
+          description: Access granted successfully
+        '404':
+          description: Team not found
+    delete:
+      tags:
+        - Annotations
+      summary: Revoke team access to annotation projects
+      description: Revoke a team's access to Label Studio annotation projects
+      operationId: revokeLabelStudioTeamAccess
+      parameters:
+        - $ref: './components/parameters/annotations/ProjectId.yaml'
+      responses:
+        '204':
+          description: Access revoked successfully
+        '404':
+          description: Team not found
+  /admin/orgs/{orgname}/teams:
+    parameters:
+      - $ref: './components/parameters/Orgname.yaml'
+    post:
+      tags:
+        - Organizations
+      summary: Create an organization team
+      description: Create a new team in an organization. Use team_type "annotator" to create an annotator team with access only to annotation projects.
+      operationId: createOrgTeam
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: './components/schemas/annotations/CreateAnnotatorTeam.yaml'
+      responses:
+        '201':
+          description: Team created successfully
+        '400':
+          description: Invalid team type or other validation error
   /repos/{owner}/{repo}/commits/{sha}:
     get:
       tags:

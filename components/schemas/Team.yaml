@@ -1,0 +1,17 @@
+type: object
+properties:
+  id:
+    type: integer
+    format: int64
+  name:
+    type: string
+  description:
+    type: string
+  team_type:
+    type: string
+    enum: [normal, annotator]
+    description: Type of team - normal teams have repository access, annotator teams only have annotation project access
+  permission:
+    type: string
+    enum: [none, read, write, admin]
+    description: Repository permission level (not applicable for annotator teams)

@@ -1,0 +1,14 @@
+type: object
+required:
+  - project_id
+properties:
+  project_id:
+    type: integer
+    format: int64
+    description: Project ID, -1 for wildcard access to all projects
+    example: -1
+  access_level:
+    type: string
+    enum: [annotator, none]
+    default: annotator
+    description: Access level to grant

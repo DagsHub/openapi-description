@@ -1,0 +1,7 @@
+name: userid
+in: path
+required: true
+description: User ID
+schema:
+  type: integer
+  format: int64

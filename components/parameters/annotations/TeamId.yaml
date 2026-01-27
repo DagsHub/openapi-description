@@ -1,0 +1,7 @@
+name: teamid
+in: path
+required: true
+description: Team ID
+schema:
+  type: integer
+  format: int64

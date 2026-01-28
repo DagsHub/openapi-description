@@ -49,13 +49,14 @@ jobs:
           repository: DagsHub/api-clients
 
       - name: Open a PR
-        uses: vsoch/pull-request-action@1.0.21
         env:
-          PULL_REQUEST_REPOSITORY: DagsHub/api-clients
-          PULL_REQUEST_TOKEN: ${{ secrets.PAT }}
-          PULL_REQUEST_BRANCH: "main"
-          PULL_REQUEST_FROM_BRANCH: update-clients-${{ github.run_number }}
-          PULL_REQUEST_TITLE: 'Update API Clients'
-          PULL_REQUEST_BODY: Automated clients update duo to an update in the [OpenAPI description](https://github.com/DagsHub/openapi-description/)          
-          PULL_REQUEST_UPDATE: true
+          GH_TOKEN: ${{ secrets.PAT }}
+        run: |
+          cd api-clients
+          gh pr create --repo DagsHub/api-clients \
+            --base main \
+            --head update-clients-${{ github.run_number }} \
+            --title "Update API Clients" \
+            --body "Automated clients update due to an update in the [OpenAPI description](https://github.com/DagsHub/openapi-description/)" \
+          || echo "PR already exists or nothing to update"
     

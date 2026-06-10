@@ -1,0 +1,22 @@
+type: object
+properties:
+  name:
+    type: string
+  commit:
+    type: object
+    properties:
+      id:
+        type: string
+      message:
+        type: string
+      url:
+        type: string
+      author:
+        type: object
+        properties:
+          name:
+            type: string
+          email:
+            type: string
+          username:
+            type: string

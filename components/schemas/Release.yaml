@@ -1,0 +1,21 @@
+type: object
+properties:
+  id:
+    type: integer
+  tag_name:
+    type: string
+  target_commitish:
+    type: string
+  name:
+    type: string
+  body:
+    type: string
+  draft:
+    type: boolean
+  prerelease:
+    type: boolean
+  author:
+    $ref: './User.yaml'
+  created_at:
+    type: string
+    format: date-time

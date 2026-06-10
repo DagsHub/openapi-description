@@ -1,0 +1,22 @@
+type: object
+description: Map of experiment IDs to their metrics by path
+additionalProperties:
+  type: object
+  description: Map of file paths to metrics
+  additionalProperties:
+    type: object
+    description: Map of metric names to metric values
+    additionalProperties:
+      type: array
+      items:
+        type: object
+        properties:
+          Value:
+            type: number
+          Timestamp:
+            type: integer
+            format: int64
+          Step:
+            type: integer
+          ValueStr:
+            type: string

@@ -1,0 +1,23 @@
+type: object
+properties:
+  id:
+    type: integer
+  username:
+    type: string
+  login:
+    type: string
+  full_name:
+    type: string
+  email:
+    type: string
+  avatar_url:
+    type: string
+  permissions:
+    type: object
+    properties:
+      admin:
+        type: boolean
+      push:
+        type: boolean
+      pull:
+        type: boolean

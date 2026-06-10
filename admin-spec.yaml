@@ -1,0 +1,869 @@
+# DagsHub Admin API — private spec for on-prem sysadmin automation
+openapi: 3.0.3
+info:
+  title: DagsHub Admin API
+  version: 1.0.0
+  description: |
+    Admin API for on-premise DagsHub sysadmin automation. All endpoints require admin privileges.
+
+    ## Authentication
+    Use HTTP Basic authentication with an admin account's username and password or access token:
+    ```
+    Authorization: Basic base64(username:token)
+    ```
+
+    ## Access Control
+    All endpoints in this spec are protected by admin middleware. Requests from non-admin
+    accounts will receive a 403 response.
+
+servers:
+  - url: https://{host}/api/v1
+    variables:
+      host:
+        default: dagshub.com
+        description: Your DagsHub instance hostname
+
+security:
+  - basicAuth: []
+  - tokenAuth: []
+
+components:
+  securitySchemes:
+    basicAuth:
+      type: http
+      scheme: basic
+    tokenAuth:
+      type: http
+      scheme: bearer
+      bearerFormat: token
+
+  schemas:
+    User:
+      type: object
+      properties:
+        id:
+          type: integer
+          format: int64
+        login:
+          type: string
+        full_name:
+          type: string
+        avatar_url:
+          type: string
+        email:
+          type: string
+        website:
+          type: string
+        company:
+          type: string
+        description:
+          type: string
+
+    AdminUser:
+      type: object
+      description: Extended user object returned by admin endpoints
+      properties:
+        basic_data:
+          $ref: '#/components/schemas/User'
+        email:
+          type: string
+          description: User's primary email address
+        owned_orgs:
+          type: array
+          items:
+            $ref: '#/components/schemas/AdminUser'
+        repositories:
+          type: array
+          items:
+            $ref: '#/components/schemas/Repository'
+        user_type:
+          type: integer
+          description: "0 = individual user, 1 = organization"
+        location:
+          type: string
+        twitter:
+          type: string
+        github:
+          type: string
+
+    Repository:
+      type: object
+      properties:
+        id:
+          type: integer
+          format: int64
+        owner:
+          $ref: '#/components/schemas/User'
+        name:
+          type: string
+        full_name:
+          type: string
+        description:
+          type: string
+        private:
+          type: boolean
+        fork:
+          type: boolean
+        empty:
+          type: boolean
+        mirror:
+          type: boolean
+        size:
+          type: integer
+          format: int64
+        html_url:
+          type: string
+        ssh_url:
+          type: string
+        clone_url:
+          type: string
+        website:
+          type: string
+        stars_count:
+          type: integer
+        forks_count:
+          type: integer
+        watchers_count:
+          type: integer
+        open_issues_count:
+          type: integer
+        default_branch:
+          type: string
+        created_at:
+          type: string
+          format: date-time
+        updated_at:
+          type: string
+          format: date-time
+        permissions:
+          type: object
+          properties:
+            admin:
+              type: boolean
+            push:
+              type: boolean
+            pull:
+              type: boolean
+
+    Organization:
+      type: object
+      properties:
+        id:
+          type: integer
+          format: int64
+        username:
+          type: string
+        full_name:
+          type: string
+        avatar_url:
+          type: string
+        description:
+          type: string
+        website:
+          type: string
+        location:
+          type: string
+
+    Team:
+      type: object
+      properties:
+        id:
+          type: integer
+          format: int64
+        name:
+          type: string
+        description:
+          type: string
+        permission:
+          type: string
+          enum: [none, read, write, admin]
+        team_type:
+          type: string
+          enum: [normal, annotator]
+          description: "normal = repository access; annotator = annotation project access only"
+
+    PublicKey:
+      type: object
+      properties:
+        id:
+          type: integer
+          format: int64
+        key:
+          type: string
+        url:
+          type: string
+        title:
+          type: string
+        created_at:
+          type: string
+          format: date-time
+
+    OidcGroup:
+      type: object
+      properties:
+        id:
+          type: integer
+          format: int64
+        name:
+          type: string
+          description: OIDC group name from the identity provider
+        org_id:
+          type: integer
+          format: int64
+        org_name:
+          type: string
+        team_id:
+          type: integer
+          format: int64
+        team_name:
+          type: string
+
+paths:
+  # ── User Management ──────────────────────────────────────────────────────────
+
+  /admin/users:
+    post:
+      tags: [Users]
+      summary: Create a user
+      operationId: adminCreateUser
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [username, email]
+              properties:
+                source_id:
+                  type: integer
+                  format: int64
+                  description: Login source ID (0 = local auth)
+                login_name:
+                  type: string
+                  description: Login name for external auth sources
+                username:
+                  type: string
+                  description: Username (alphanumeric, dash, dot; max 35 chars)
+                full_name:
+                  type: string
+                  description: Display name (max 100 chars)
+                email:
+                  type: string
+                  format: email
+                password:
+                  type: string
+                  description: Password (max 255 chars). Optional when using external auth source.
+                send_notify:
+                  type: boolean
+                  description: Send registration notification email
+      responses:
+        '201':
+          description: User created
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AdminUser'
+        '422':
+          description: Username/email already in use, or license limit reached
+
+  /admin/users/email/{email}:
+    get:
+      tags: [Users]
+      summary: Get a user by email address
+      operationId: adminGetUserByEmail
+      parameters:
+        - name: email
+          in: path
+          required: true
+          schema:
+            type: string
+            format: email
+      responses:
+        '200':
+          description: User found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AdminUser'
+        '404':
+          description: No user with this email
+
+  /admin/users/{username}:
+    get:
+      tags: [Users]
+      summary: Get a user by username
+      operationId: adminGetUser
+      parameters:
+        - name: username
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: User found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AdminUser'
+        '404':
+          description: User not found
+
+    patch:
+      tags: [Users]
+      summary: Edit a user
+      operationId: adminEditUser
+      parameters:
+        - name: username
+          in: path
+          required: true
+          schema:
+            type: string
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                source_id:
+                  type: integer
+                  format: int64
+                login_name:
+                  type: string
+                full_name:
+                  type: string
+                  description: Display name (max 100 chars)
+                email:
+                  type: string
+                  format: email
+                password:
+                  type: string
+                website:
+                  type: string
+                  description: Max 50 chars
+                location:
+                  type: string
+                  description: Max 50 chars
+                active:
+                  type: boolean
+                  description: Whether the account is active
+                admin:
+                  type: boolean
+                  description: Whether the user has admin privileges
+                allow_git_hook:
+                  type: boolean
+                allow_import_local:
+                  type: boolean
+                max_repo_creation:
+                  type: integer
+                  description: Maximum repositories this user can create (-1 = unlimited)
+      responses:
+        '200':
+          description: User updated
+        '404':
+          description: User not found
+        '422':
+          description: Validation error
+
+    delete:
+      tags: [Users]
+      summary: Delete a user
+      operationId: adminDeleteUser
+      parameters:
+        - name: username
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        '204':
+          description: User deleted
+        '404':
+          description: User not found
+        '422':
+          description: User cannot be deleted (e.g., owns repositories or organizations)
+
+  /admin/users/{username}/keys:
+    post:
+      tags: [Users]
+      summary: Add a public SSH key for a user
+      operationId: adminCreateUserPublicKey
+      parameters:
+        - name: username
+          in: path
+          required: true
+          schema:
+            type: string
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [title, key]
+              properties:
+                title:
+                  type: string
+                key:
+                  type: string
+                  description: OpenSSH public key
+      responses:
+        '201':
+          description: Key added
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PublicKey'
+        '422':
+          description: Key already exists or invalid format
+
+  /admin/users/{username}/orgs:
+    post:
+      tags: [Users]
+      summary: Create an organization on behalf of a user
+      operationId: adminCreateOrg
+      parameters:
+        - name: username
+          in: path
+          required: true
+          schema:
+            type: string
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [username]
+              properties:
+                username:
+                  type: string
+                  description: Organization username
+                full_name:
+                  type: string
+                description:
+                  type: string
+                website:
+                  type: string
+                location:
+                  type: string
+      responses:
+        '201':
+          description: Organization created
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Organization'
+        '422':
+          description: Username already in use
+
+  /admin/users/{username}/repos:
+    post:
+      tags: [Users]
+      summary: Create a repository on behalf of a user
+      operationId: adminCreateRepo
+      parameters:
+        - name: username
+          in: path
+          required: true
+          schema:
+            type: string
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [name]
+              properties:
+                name:
+                  type: string
+                  description: Repository name (alphanumeric, dash, dot; max 100 chars)
+                description:
+                  type: string
+                  description: Max 255 chars
+                private:
+                  type: boolean
+                auto_init:
+                  type: boolean
+                  description: Initialize with README
+                gitignores:
+                  type: string
+                license:
+                  type: string
+                readme:
+                  type: string
+      responses:
+        '201':
+          description: Repository created
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Repository'
+        '422':
+          description: Repository name already in use or invalid
+
+  # ── OIDC Group Mapping ────────────────────────────────────────────────────────
+
+  /admin/oidc_groups:
+    get:
+      tags: [OIDC]
+      summary: List OIDC group mappings
+      description: |
+        Returns all configured mappings between identity-provider OIDC groups and
+        DagsHub organization teams. Used to automate team membership via SSO.
+      operationId: adminListOidcGroups
+      responses:
+        '200':
+          description: List of OIDC group mappings
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/OidcGroup'
+
+    post:
+      tags: [OIDC]
+      summary: Create an OIDC group mapping
+      description: |
+        Maps an OIDC group name (from your identity provider) to a DagsHub organization team.
+        Users who authenticate via OIDC and belong to the named group are automatically
+        added to the specified team.
+      operationId: adminCreateOidcGroup
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [name, org_id, team_id]
+              properties:
+                name:
+                  type: string
+                  description: OIDC group name as it appears in the identity provider
+                org_id:
+                  type: integer
+                  format: int64
+                  description: ID of the DagsHub organization
+                team_id:
+                  type: integer
+                  format: int64
+                  description: ID of the team within the organization
+      responses:
+        '201':
+          description: Mapping created
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/OidcGroup'
+
+  /admin/oidc_groups/{id}:
+    delete:
+      tags: [OIDC]
+      summary: Delete an OIDC group mapping
+      operationId: adminDeleteOidcGroup
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+            format: int64
+      responses:
+        '204':
+          description: Mapping deleted
+        '404':
+          description: Mapping not found
+
+  # ── Organization & Team Management ───────────────────────────────────────────
+
+  /admin/orgs/{orgname}/teams:
+    post:
+      tags: [Teams]
+      summary: Create a team in an organization
+      operationId: adminCreateTeam
+      parameters:
+        - name: orgname
+          in: path
+          required: true
+          schema:
+            type: string
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [name]
+              properties:
+                name:
+                  type: string
+                  description: Team name (alphanumeric, dash, dot; max 30 chars)
+                description:
+                  type: string
+                  description: Max 255 chars
+                permission:
+                  type: string
+                  enum: [none, read, write, admin]
+                  description: Repository permission level for normal teams
+                team_type:
+                  type: string
+                  enum: [normal, annotator]
+                  description: "normal = repo access; annotator = annotation projects only"
+      responses:
+        '201':
+          description: Team created
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Team'
+        '422':
+          description: Team name already exists in org or invalid
+
+  /admin/orgs/{orgname}/members/{username}:
+    delete:
+      tags: [Teams]
+      summary: Remove a member from an organization
+      operationId: adminRemoveOrgMember
+      parameters:
+        - name: orgname
+          in: path
+          required: true
+          schema:
+            type: string
+        - name: username
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        '204':
+          description: Member removed
+        '404':
+          description: Organization or user not found
+
+  /admin/teams/{teamid}/members/{username}:
+    put:
+      tags: [Teams]
+      summary: Add a member to a team
+      operationId: adminAddTeamMember
+      parameters:
+        - name: teamid
+          in: path
+          required: true
+          schema:
+            type: integer
+            format: int64
+        - name: username
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        '204':
+          description: Member added
+        '404':
+          description: Team or user not found
+
+    delete:
+      tags: [Teams]
+      summary: Remove a member from a team
+      operationId: adminRemoveTeamMember
+      parameters:
+        - name: teamid
+          in: path
+          required: true
+          schema:
+            type: integer
+            format: int64
+        - name: username
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        '204':
+          description: Member removed
+        '404':
+          description: Team or user not found
+
+  /admin/teams/{teamid}/repos/{reponame}:
+    put:
+      tags: [Teams]
+      summary: Add a repository to a team
+      operationId: adminAddTeamRepository
+      parameters:
+        - name: teamid
+          in: path
+          required: true
+          schema:
+            type: integer
+            format: int64
+        - name: reponame
+          in: path
+          required: true
+          schema:
+            type: string
+            description: Repository full name in the format `owner/repo`
+      responses:
+        '204':
+          description: Repository added to team
+        '404':
+          description: Team or repository not found
+
+    delete:
+      tags: [Teams]
+      summary: Remove a repository from a team
+      operationId: adminRemoveTeamRepository
+      parameters:
+        - name: teamid
+          in: path
+          required: true
+          schema:
+            type: integer
+            format: int64
+        - name: reponame
+          in: path
+          required: true
+          schema:
+            type: string
+            description: Repository full name in the format `owner/repo`
+      responses:
+        '204':
+          description: Repository removed from team
+        '404':
+          description: Team or repository not found
+
+  # ── Repository Admin Operations ───────────────────────────────────────────────
+
+  /admin/repos/{owner}/{repo}/reclone:
+    post:
+      tags: [Repositories]
+      summary: Re-clone a mirrored repository
+      description: |
+        Forces a full re-clone of a mirror repository from its remote source.
+        Useful for recovering a corrupted mirror.
+      operationId: adminRecloneRepo
+      parameters:
+        - name: owner
+          in: path
+          required: true
+          schema:
+            type: string
+        - name: repo
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        '204':
+          description: Re-clone initiated
+        '404':
+          description: Repository not found
+
+  /admin/repos/{owner}/{repo}/access:
+    post:
+      tags: [Repositories]
+      summary: Grant temporary repository access to the authenticated admin user
+      description: |
+        Grants the requesting admin user direct access to the repository at the
+        specified permission level. Intended for temporary administrative access —
+        revoke with DELETE when no longer needed.
+      operationId: adminGiveRepoAccess
+      parameters:
+        - name: owner
+          in: path
+          required: true
+          schema:
+            type: string
+        - name: repo
+          in: path
+          required: true
+          schema:
+            type: string
+      requestBody:
+        required: true
+        content:
+          application/x-www-form-urlencoded:
+            schema:
+              type: object
+              properties:
+                mode:
+                  type: string
+                  enum: [read, write, admin]
+                  description: Access level to grant
+      responses:
+        '200':
+          description: Access granted
+
+    delete:
+      tags: [Repositories]
+      summary: Revoke temporary repository access from the authenticated admin user
+      operationId: adminRevokeRepoAccess
+      parameters:
+        - name: owner
+          in: path
+          required: true
+          schema:
+            type: string
+        - name: repo
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Access revoked
+
+  # ── Label Studio (Annotation Workspace) ──────────────────────────────────────
+
+  /admin/repos/{owner}/{repo}/annotations/remove-workspace:
+    post:
+      tags: [LabelStudio]
+      summary: Remove a repository's annotation workspace
+      description: |
+        Asynchronously removes the Label Studio workspace associated with the repository.
+        Use this to clean up workspaces that are stuck or need to be reprovisioned.
+
+        The `service` query parameter selects the workspace type:
+        - `0` = Label Studio (Git backend)
+        - `1` = Label Studio (S3 backend)
+      operationId: adminRemoveWorkspace
+      parameters:
+        - name: owner
+          in: path
+          required: true
+          schema:
+            type: string
+        - name: repo
+          in: path
+          required: true
+          schema:
+            type: string
+        - name: service
+          in: query
+          required: false
+          schema:
+            type: integer
+            default: 0
+            description: "Workspace service type: 0 = LS Git, 1 = LS S3"
+      responses:
+        '200':
+          description: Workspace removal initiated
+
+  /admin/label-studio/upgrade-charts:
+    post:
+      tags: [LabelStudio]
+      summary: Upgrade all Label Studio workspaces
+      description: |
+        Triggers a Helm chart upgrade for all active Label Studio workspaces across
+        all repositories. Runs with a 10-minute timeout. Use to roll out a new
+        Label Studio chart version cluster-wide.
+      operationId: adminUpgradeAllWorkspaces
+      responses:
+        '200':
+          description: Upgrade initiated for all workspaces
+        '500':
+          description: Failed to initiate upgrades

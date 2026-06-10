@@ -213,7 +213,32 @@ paths:
                 }
         '404':
           description: Folder or file not found
-  /repos/{owner}/{repo}/storage/raw/{protocol}/{bucket}/{path}: 
+    delete:
+      tags:
+        - Storage Integrations
+      summary: Delete storage entries
+      description: Delete files or directories from integrated storage. Requires repo admin permissions.
+      operationId: deleteStorageContent
+      parameters:
+      - $ref: './components/parameters/storage/Owner.yaml'
+      - $ref: './components/parameters/storage/Repository.yaml'
+      - $ref: './components/parameters/storage/Protocol.yaml'
+      - $ref: './components/parameters/storage/Bucket.yaml'
+      - name: path
+        in: path
+        required: true
+        description: The path to delete
+        schema:
+          type: string
+      responses:
+        '204':
+          description: Deleted successfully
+        '403':
+          description: Forbidden — requires repo admin role
+        '404':
+          description: Path not found
+
+  /repos/{owner}/{repo}/storage/raw/{protocol}/{bucket}/{path}:
     get:
       tags:
         - Storage Integrations
@@ -247,14 +272,8 @@ paths:
           description: successfully retrieved user information
           content:
             application/json:
-              example:
-                {
-                  "id": 5,
-                  "login": "Dean",
-                  "full_name": "Dean Pleban",
-                  "avatar_url": "https://dagshub.com/avatars/5",
-                  "username": "Dean"
-                }
+              schema:
+                $ref: './components/schemas/User.yaml'
   /users/{username}:
     get:
       tags:
@@ -268,14 +287,8 @@ paths:
           description: successfully retrieved user information
           content:
             application/json:
-              example:
-                  {
-                  "id": 5,
-                  "login": "Dean",
-                  "full_name": "Dean Pleban",
-                  "avatar_url": "https://dagshub.com/avatars/5",
-                  "username": "Dean"
-                }
+              schema:
+                $ref: './components/schemas/User.yaml'
   /repos/{owner}/{repo}/issues:
     parameters:
       - $ref: './components/parameters/Owner.yaml'
@@ -361,55 +374,8 @@ paths:
           description: retrieved experiments successfully
           content:
             application/json:
-              example:
-                {
-                  "experiments": {
-                    "2301": {
-                      "ID": "2301",
-                      "RepoID": 74,
-                      "CommitID": "6cdbe879ecf2adbfff2631d90b27de6569c0fc2a",
-                      "TimeUnixMs": 1595149314000,
-                      "Tags": {
-                        "CommitAuthorName": "Martin Daniel",
-                        "CommitAuthorTimestampUnixSec": 1595149314,
-                        "CommitCommitterName": "Martin Daniel",
-                        "CommitCommitterTimestampUnixSec": 1595149314,
-                        "CommitMessage": "Change parameters\n"
-                      },
-                      "Name": "",
-                      "MetricsByPath": {
-                        "metrics.csv": {
-                          "LatestByName": {
-                          "test__accuracy": {
-                            "ExperimentID": "2301",
-                            "Name": "test__accuracy",
-                            "Value": 0.91712,
-                            "Timestamp": 1595149274803,
-                            "Step": 1,
-                            "ValueStr": "0.91712",
-                            "Path": "metrics.csv",
-                            "IsInvalidFloat": false
-                            },
-                          }
-                        }
-                      },
-                      "HyperParamsByPath": {
-                        "params.yml": [
-                          {
-                            "ExperimentID": 2301,
-                            "Name": "tfidf__max_df",
-                            "Value": "1",
-                            "Path": "params.yml"
-                          }, 
-                        ]
-                      },
-                      "Labels": [],
-                      "Errors": [],
-                      "Source": "git",
-                      "Group": ""
-                    },
-                  }
-                }
+              schema:
+                $ref: './components/schemas/ExperimentsResponse.yaml'
   /repos/{owner}/{repo}/experiments/metricsForExperiments:
     post:
       tags:
@@ -429,29 +395,8 @@ paths:
           description: Retrieved experiments metrics
           content:
             application/json:
-              example:
-                {
-                  "2306": {
-                    "metrics.csv": {
-                    "test__accuracy": [
-                      {
-                      "Value": 0.91712,
-                      "Timestamp": 1595149274803,
-                      "Step": 1,
-                      "ValueStr": "0.91712"
-                      }
-                    ],
-                    "train__roc_auc": [
-                      {
-                      "Value": 0.9997316690244479,
-                      "Timestamp": 1595149273838,
-                      "Step": 1,
-                      "ValueStr": "0.9997316690244479"
-                      }
-                    ]
-                    }
-                  }
-                }
+              schema:
+                $ref: './components/schemas/ExperimentMetricsResponse.yaml'
   /repos/{owner}/{repo}/experiments/experiment/{experimentKey}:
     post:
       tags:
@@ -473,7 +418,9 @@ paths:
           description: Edit experiment info successfully
           content:
             application/json:
-              example: "Awesome New Experiment Name"
+              schema:
+                type: string
+                description: The new experiment name
     delete: 
       tags:
         - Experiments
@@ -510,7 +457,9 @@ paths:
           description: Experiment label was added
           content:
             application/json:
-              example: "Cool New Label"
+              schema:
+                type: string
+                description: The added label name
     delete:
       tags:
         - Experiments
@@ -530,7 +479,11 @@ paths:
           description: Experiment label was deleted
           content:
             application/json:
-              example: []
+              schema:
+                type: array
+                items:
+                  type: string
+                description: Remaining labels after deletion
 
   /repos/search:
     get:
@@ -567,55 +520,39 @@ paths:
           description: Success
           content:
             application/json:
-              schema: 
-                example:
-                  {
-                    "data": [
-                      {
-                        "id": 1213,
-                        "owner": {
-                          "id": 6,
-                          "login": "DAGsHub-Official",
-                          "full_name": "DagsHub Official",
-                          "avatar_url": "https://dagshub.com/avatars/6",
-                          "username": "DAGsHub-Official"
-                        },
-                        "name": "dagshub-docs",
-                        "full_name": "DAGsHub-Official/dagshub-docs",
-                        "description": "Official repo for DagsHub documentation.",
-                        "private": false,
-                        "fork": false,
-                        "parent": null,
-                        "empty": false,
-                        "mirror": false,
-                        "size": 458313728,
-                        "html_url": "https://dagshub.com/DAGsHub-Official/dagshub-docs",
-                        "ssh_url": "ssh://git@dagshub.com:2200/DAGsHub-Official/dagshub-docs.git",
-                        "clone_url": "https://dagshub.com/DAGsHub-Official/dagshub-docs.git",
-                        "website": "https://dagshub.com/docs",
-                        "stars_count": 4,
-                        "forks_count": 11,
-                        "watchers_count": 1,
-                        "open_issues_count": 2,
-                        "default_branch": "main",
-                        "created_at": "2021-02-23T11:53:45Z",
-                        "updated_at": "2022-09-14T09:55:35Z"
-                      },
-                    ],
-                    "ok": true,
-                  }
+              schema:
+                $ref: './components/schemas/RepositorySearchResponse.yaml'
   /repos/{owner}/{repo}:
+    parameters:
+      - $ref: './components/parameters/Owner.yaml'
+      - $ref: './components/parameters/Repository.yaml'
     get:
       tags:
-        - Repository
+        - Repositories
       summary: Get repository information
       operationId: getRepo
-      parameters:
-        - $ref: './components/parameters/Owner.yaml'
-        - $ref: './components/parameters/Repository.yaml'
       responses:
         '200':
-          description: repository information successfully retrieved
+          description: Repository information
+          content:
+            application/json:
+              schema:
+                $ref: './components/schemas/Repository.yaml'
+        '404':
+          description: Repository not found
+    delete:
+      tags:
+        - Repositories
+      summary: Delete a repository
+      description: Permanently deletes a repository. Requires owner permissions.
+      operationId: deleteRepo
+      responses:
+        '204':
+          description: Repository deleted
+        '403':
+          description: Not authorized
+        '404':
+          description: Repository not found
   /user/repos:  
     get:
       summary: List your repositories
@@ -631,45 +568,10 @@ paths:
           description: Success
           content:
             application/json:
-              schema: 
-                example:
-                  [
-                    {
-                      "id": 2942,
-                      "owner": {
-                        "id": 23,
-                        "login": "DagsHub",
-                        "full_name": "DagsHub",
-                        "avatar_url": "https://dagshub.com/avatars/23",
-                        "username": "DagsHub"
-                      },
-                      "name": "audio-datasets",
-                      "full_name": "DagsHub/audio-datasets",
-                      "description": "Open-source audio datasets hosted on DagsHub",
-                      "private": false,
-                      "fork": false,
-                      "parent": null,
-                      "empty": false,
-                      "mirror": true,
-                      "size": 10121216,
-                      "html_url": "https://dagshub.com/DagsHub/audio-datasets",
-                      "ssh_url": "ssh://git@dagshub.com:2200/DagsHub/audio-datasets.git",
-                      "clone_url": "https://github.com/DAGsHub/audio-datasets.git",
-                      "website": "",
-                      "stars_count": 2,
-                      "forks_count": 2,
-                      "watchers_count": 7,
-                      "open_issues_count": 11,
-                      "default_branch": "main",
-                      "created_at": "2021-10-05T16:02:42Z",
-                      "updated_at": "2022-08-22T09:54:12Z",
-                      "permissions": {
-                        "admin": true,
-                        "push": true,
-                        "pull": true
-                      }
-                    },
-                  ]
+              schema:
+                type: array
+                items:
+                  $ref: './components/schemas/Repository.yaml'
     post:
       tags:
         - Repository
@@ -798,35 +700,10 @@ paths:
           description: OK
           content:
             application/json:
-              example: 
-                [
-                  {
-                      "name":"master",
-                      "commit":{
-                        "id":"c1c220c4dd6df895965a02b8be575c5e2f78dfd1",
-                        "message":"A commit message. \n",
-                        "url":"Not implemented",
-                        "author":{
-                            "name":"Author Name",
-                            "email":"author@email.com",
-                            "username":""
-                        }
-                      }
-                  },
-                  {
-                      "name":"second-branch",
-                      "commit":{
-                        "id":"0a0fdf63c23af6a2836c426c5284136015ec2996",
-                        "message":"A second commit message.\n",
-                        "url":"Not implemented",
-                        "author":{
-                            "name":"Author Name",
-                            "email":"author@email.com",
-                            "username":""
-                        }
-                      }
-                  }
-                ]
+              schema:
+                type: array
+                items:
+                  $ref: './components/schemas/Branch.yaml'
   /repos/{owner}/{repo}/branches/{branch}:
     get:
       tags:
@@ -842,20 +719,8 @@ paths:
           description: OK
           content:
             application/json:
-              example:
-                {
-                  "name":":branchname",
-                  "commit":{
-                      "id":"0a0fdf63c23af6a2836c426c5284136015ec2996",
-                      "message":"A second commit message.\n",
-                      "url":"Not implemented",
-                      "author":{
-                        "name":"Author Name",
-                        "email":"author@email.com",
-                        "username":""
-                      }
-                  }
-                }
+              schema:
+                $ref: './components/schemas/Branch.yaml'
   /repos/{owner}/{repo}/collaborators/{collaborator}:
     put:
       tags:
@@ -909,22 +774,10 @@ paths:
           description: OK
           content:
             application/json:
-              example:
-                [
-                  {
-                    "id": 3,
-                    "username": "user1",
-                    "login": "user1",
-                    "full_name": "",
-                    "email": "user1@user.com",
-                    "avatar_url": "https://secure.gravatar.com/avatar/0207f4280f6c1bd45e1a2ed7cb1cca3d",
-                    "permissions": {
-                      "admin": false,
-                      "push": true,
-                      "pull": true
-                    }
-                  }
-                ]
+              schema:
+                type: array
+                items:
+                  $ref: './components/schemas/Collaborator.yaml'
   /repos/{owner}/{repo}/annotations/access/users:
     parameters:
       - $ref: './components/parameters/Owner.yaml'
@@ -1099,6 +952,56 @@ paths:
           description: Team created successfully
         '400':
           description: Invalid team type or other validation error
+  /admin/orgs/{orgname}:
+    parameters:
+      - $ref: './components/parameters/Orgname.yaml'
+    delete:
+      tags:
+        - Organizations
+      summary: Delete an organization
+      description: Delete an organization. Set cascade to true to also delete dependent organization-owned repositories and relationships that block ordinary deletion.
+      operationId: adminDeleteOrg
+      parameters:
+        - name: cascade
+          in: query
+          required: false
+          schema:
+            type: boolean
+            default: false
+      responses:
+        '204':
+          description: Organization deleted successfully
+        '400':
+          description: Invalid cascade query value
+        '404':
+          description: Organization not found
+        '422':
+          description: Organization cannot be deleted without cascade or has blocking dependencies
+  /admin/users/{username}:
+    parameters:
+      - $ref: './components/parameters/Username.yaml'
+    delete:
+      tags:
+        - Administration
+      summary: Delete a user account
+      description: Delete a user account. Set cascade to true to also delete dependent user-owned repositories, removable organization memberships, and sole-member organizations that block ordinary deletion.
+      operationId: adminDeleteUser
+      parameters:
+        - name: cascade
+          in: query
+          required: false
+          schema:
+            type: boolean
+            default: false
+      responses:
+        '204':
+          description: User account deleted successfully
+        '400':
+          description: Invalid cascade query value
+        '404':
+          description: User not found
+        '422':
+          description: User cannot be deleted without cascade or has blocking dependencies
   /repos/{owner}/{repo}/commits/{sha}:
     get:
       tags:
@@ -1114,80 +1017,8 @@ paths:
           description: OK
           content:
             application/json:
-              example:
-                {
-                  "commit": {
-                    "id": "106201d5de4b7f0cce296b4578747ba43504d152",
-                    "message": "Merge pull request #65 from drecali/main\n\nfix broken Discord invite link and clarify project sharing instructions",
-                    "url": "",
-                    "author": {
-                      "name": "Dean P",
-                      "email": "deanp07@gmail.com",
-                      "username": ""
-                    },
-                    "committer": {
-                      "name": "GitHub",
-                      "email": "noreply@github.com",
-                      "username": ""
-                    },
-                    "added": null,
-                    "removed": null,
-                    "modified": null,
-                    "timestamp": "2022-08-22T09:53:53Z"
-                  },
-                  "files": [
-                    {
-                      "filename": "CONTRIBUTING.md",
-                      "sha": "Not Implemented",
-                      "blob_url": "Not Implemented",
-                      "additions": 1,
-                      "deletions": 1,
-                      "changes": 2,
-                      "status": "changed"
-                    }
-                  ],
-                  "stats": {
-                    "additions": 1,
-                    "deletions": 1,
-                    "total": 2
-                  },
-                  "experiment": null
-                }
-  /repos/{owner}/{repo}/releases:
-    get:
-      tags:
-        - Releases
-      summary: List Releases
-      operationId: listReleases
-      parameters:
-        - $ref: './components/parameters/Owner.yaml'
-        - $ref: './components/parameters/Repository.yaml'
-      responses:
-        '200':
-          description: OK
-          content:
-            application/json:
-              example: 
-                [
-                  {
-                    "id": 1,
-                    "tag_name": "sometag",
-                    "target_commitish": "master",
-                    "name": "awesome-release",
-                    "body": "Description of the release",
-                    "draft": false,
-                    "prerelease": false,
-                    "author": {
-                      "id": 1,
-                      "username": "Author Name",
-                      "login": "",
-                      "full_name": "",
-                      "email":"author@email.com",
-                      "avatar_url": ""
-                    },
-                    "created_at": "2020-03-28T13:38:00+03:00"
-                  }
-                ]
+              schema:
+                $ref: './components/schemas/Commit.yaml'
   /repos/{owner}/{repo}/hooks:
     parameters:
       - $ref: './components/parameters/Owner.yaml'
@@ -1202,44 +1033,10 @@ paths:
           description: OK
           content:
             application/json:
-              example:
-                [
-                  {
-                    "id": 9,
-                    "type": "dagshub",
-                    "config": {
-                      "content_type": "json",
-                      "url": "<webhook-url>"
-                    },
-                    "events": [
-                      "create",
-                      "delete",
-                      "push",
-                      "pull_request",
-                      "release"
-                    ],
-                    "active": true,
-                    "updated_at": "2022-09-14T10:01:11Z",
-                    "created_at": "2021-03-21T11:39:30Z"
-                  },
-                  {
-                    "id": 11,
-                    "type": "discord",
-                    "config": {
-                      "content_type": "json",
-                      "url": "https://discord.com/api/webhooks/awesome-webhook"
-                    },
-                    "events": [
-                      "fork",
-                      "issues",
-                      "pull_request",
-                      "issue_comment"
-                    ],
-                    "active": true,
-                    "updated_at": "2022-09-14T10:01:12Z",
-                    "created_at": "2021-03-22T11:28:45Z"
-                  }
-                ]
+              schema:
+                type: array
+                items:
+                  $ref: './components/schemas/Webhook.yaml'
     post:
       tags:
         - Webhooks
@@ -1272,22 +1069,8 @@ paths:
           description: Created
           content:
             application/json:
-              example:
-                {
-                "id": 20,
-                "type": "discord",
-                "config": {
-                  "content_type": "json",
-                  "url": "<webhook-url>"
-                },
-                "events": [
-                  "create",
-                  "push"
-                ],
-                "active": true,
-                "updated_at": "2022-08-29T11:31:22.453572732+08:00",
-                "created_at": "2022-08-29T11:31:22.453569275+08:00"
-              }
+              schema:
+                $ref: './components/schemas/Webhook.yaml'
   /repos/{owner}/{repo}/hooks/{id}:
     parameters:
         - $ref: './components/parameters/Owner.yaml'
@@ -1316,25 +1099,12 @@ paths:
                   type: boolean
                   description: Weather the hook is actually triggered on pushes or not. Ignore this field to leave it unchanged.
       responses:
-        '200': 
+        '200':
           description: OK
           content:
             application/json:
-              example:
-                {
-                  "id": 20,
-                  "type": "dagshub",
-                  "config": {
-                    "content_type": "json",
-                    "url": "<webhook-url>"
-                  },
-                  "events": [
-                    "push"
-                  ],
-                  "active": true,
-                  "updated_at": "2022-08-29T11:45:30.577057789+08:00",
-                  "created_at": "2022-08-29T11:31:22+08:00"
-                }
+              schema:
+                $ref: './components/schemas/Webhook.yaml'
     delete:
       summary: Delete a hook
       operationId: deleteHook
@@ -1343,6 +1113,2128 @@ paths:
       responses:
         '204':
           description: No Content, deleted successfully
+  /repos/{owner}/{repo}/data-engine/blob-preview/{value}:
+    parameters:
+      - $ref: './components/parameters/Owner.yaml'
+      - $ref: './components/parameters/Repository.yaml'
+      - name: value
+        in: path
+        required: true
+        schema:
+          type: string
+        description: |
+          Blob identifier to fetch a preprocessed video preview.
+          Can be a 64-char metadata blob hash, or a pointer blob value (`pointer://datasourcepath/...`) URL-encoded for path safety.
+    get:
+      tags:
+        - Data Engine
+      summary: Get Data Engine blob preview clip
+      operationId: getDataEngineBlobPreview
+      responses:
+        '200':
+          description: Preprocessed video preview clip
+          content:
+            video/mp4:
+              schema:
+                type: string
+                format: binary
+        '404':
+          description: Preview clip not found
+
+  /repos/{owner}/{repo}/data-engine/blob/{sha}:
+    get:
+      tags:
+        - Data Engine
+      summary: Download a metadata blob by SHA
+      description: |
+        Download a raw metadata blob by its 64-character SHA hash.
+        > **Note:** This endpoint is part of the Data Engine feature and may not be stable.
+      operationId: getDataEngineBlob
+      parameters:
+        - $ref: './components/parameters/Owner.yaml'
+        - $ref: './components/parameters/Repository.yaml'
+        - name: sha
+          in: path
+          required: true
+          schema:
+            type: string
+            pattern: '^[a-f0-9]{64}$'
+          description: 64-character SHA hash of the blob
+      responses:
+        '200':
+          description: Blob content
+          content:
+            application/octet-stream:
+              schema:
+                type: string
+                format: binary
+        '404':
+          description: Blob not found
+
+  /repos/{owner}/{repo}/data-engine/create-dataset:
+    post:
+      tags:
+        - Data Engine
+      summary: Create a new dataset (datasource)
+      description: |
+        Creates a new dataset (datasource) in the repository's Data Engine.
+        > **Note:** This endpoint is part of the Data Engine feature and may not be stable.
+      operationId: createDataset
+      parameters:
+        - $ref: './components/parameters/Owner.yaml'
+        - $ref: './components/parameters/Repository.yaml'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                name:
+                  type: string
+                  description: Dataset name
+                datasource_type:
+                  type: string
+                  description: Type of datasource
+      responses:
+        '201':
+          description: Dataset created
+        '403':
+          description: Forbidden — requires write access
+
+  /repos/{owner}/{repo}/data-engine/import/metadata:
+    post:
+      tags:
+        - Data Engine
+      summary: Import metadata from file
+      description: |
+        Upload a CSV/JSON file to import metadata into the Data Engine.
+        Returns a task ID to poll for completion.
+        > **Note:** This endpoint is part of the Data Engine feature and may not be stable.
+      operationId: importDataEngineMetadata
+      parameters:
+        - $ref: './components/parameters/Owner.yaml'
+        - $ref: './components/parameters/Repository.yaml'
+      requestBody:
+        required: true
+        content:
+          multipart/form-data:
+            schema:
+              type: object
+              properties:
+                file:
+                  type: string
+                  format: binary
+      responses:
+        '202':
+          description: Import task started
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  task_id:
+                    type: string
+        '403':
+          description: Forbidden — requires write access
+
+  /repos/{owner}/{repo}/data-engine/import/metadata/{taskid}:
+    get:
+      tags:
+        - Data Engine
+      summary: Get metadata import task status
+      description: |
+        Poll the status of a metadata import task.
+        > **Note:** This endpoint is part of the Data Engine feature and may not be stable.
+      operationId: getDataEngineImportTaskStatus
+      parameters:
+        - $ref: './components/parameters/Owner.yaml'
+        - $ref: './components/parameters/Repository.yaml'
+        - name: taskid
+          in: path
+          required: true
+          schema:
+            type: string
+          description: Task ID returned from the import endpoint
+      responses:
+        '200':
+          description: Task status
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: string
+                    enum: [pending, running, completed, failed]
+                  message:
+                    type: string
+
+  # ── Users (public) ───────────────────────────────────────────────────────────
+
+  /users/search:
+    get:
+      tags:
+        - Users
+      summary: Search users
+      operationId: searchUsers
+      parameters:
+        - name: q
+          in: query
+          description: Search keyword
+          schema:
+            type: string
+        - name: limit
+          in: query
+          description: Maximum number of results
+          schema:
+            type: integer
+            default: 10
+      responses:
+        '200':
+          description: Matching users
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    type: array
+                    items:
+                      $ref: './components/schemas/User.yaml'
+                  ok:
+                    type: boolean
+
+  /users/{username}/keys:
+    parameters:
+      - $ref: './components/parameters/Username.yaml'
+    get:
+      tags:
+        - Users
+      summary: List a user's public keys
+      operationId: listUserPublicKeys
+      responses:
+        '200':
+          description: User's public keys
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  type: object
+                  properties:
+                    id:
+                      type: integer
+                      format: int64
+                    key:
+                      type: string
+                    url:
+                      type: string
+                    title:
+                      type: string
+                    created_at:
+                      type: string
+                      format: date-time
+
+  /users/{username}/followers:
+    parameters:
+      - $ref: './components/parameters/Username.yaml'
+    get:
+      tags:
+        - Users
+      summary: List a user's followers
+      operationId: listUserFollowers
+      parameters:
+        - name: page
+          in: query
+          schema:
+            type: integer
+            default: 1
+      responses:
+        '200':
+          description: List of followers
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: './components/schemas/User.yaml'
+
+  /users/{username}/following:
+    parameters:
+      - $ref: './components/parameters/Username.yaml'
+    get:
+      tags:
+        - Users
+      summary: List who a user is following
+      operationId: listUserFollowing
+      parameters:
+        - name: page
+          in: query
+          schema:
+            type: integer
+            default: 1
+      responses:
+        '200':
+          description: List of followed users
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: './components/schemas/User.yaml'
+
+  /users/{username}/following/{target}:
+    parameters:
+      - $ref: './components/parameters/Username.yaml'
+      - name: target
+        in: path
+        required: true
+        schema:
+          type: string
+        description: Username of the user to check
+    get:
+      tags:
+        - Users
+      summary: Check if a user is following another user
+      operationId: checkUserFollowing
+      responses:
+        '204':
+          description: User is following target
+        '404':
+          description: User is not following target
+
+  /users/{username}/orgs:
+    parameters:
+      - $ref: './components/parameters/Username.yaml'
+    get:
+      tags:
+        - Organizations
+      summary: List a user's organizations
+      operationId: listUserOrgs
+      responses:
+        '200':
+          description: Organizations the user belongs to
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  type: object
+                  properties:
+                    id:
+                      type: integer
+                      format: int64
+                    username:
+                      type: string
+                    full_name:
+                      type: string
+                    avatar_url:
+                      type: string
+                    description:
+                      type: string
+                    website:
+                      type: string
+                    location:
+                      type: string
+
+  # ── User (authenticated) ──────────────────────────────────────────────────────
+
+  /user/tokens:
+    get:
+      tags:
+        - User
+      summary: List access tokens for the authenticated user
+      operationId: listAccessTokens
+      security:
+        - basicAuth: []
+      responses:
+        '200':
+          description: List of access tokens
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  type: object
+                  properties:
+                    name:
+                      type: string
+                    sha1:
+                      type: string
+                      description: Token value (only shown on creation)
+    post:
+      tags:
+        - User
+      summary: Create an access token
+      operationId: createAccessToken
+      security:
+        - basicAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [name]
+              properties:
+                name:
+                  type: string
+      responses:
+        '201':
+          description: Token created
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  name:
+                    type: string
+                  sha1:
+                    type: string
+
+  /user/tokens/{id}:
+    parameters:
+      - name: id
+        in: path
+        required: true
+        schema:
+          type: integer
+          format: int64
+    delete:
+      tags:
+        - User
+      summary: Delete an access token
+      operationId: deleteAccessToken
+      responses:
+        '204':
+          description: Token deleted
+        '404':
+          description: Token not found
+
+  /user/emails:
+    get:
+      tags:
+        - User
+      summary: List the authenticated user's email addresses
+      operationId: listEmails
+      responses:
+        '200':
+          description: Email addresses
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  type: object
+                  properties:
+                    email:
+                      type: string
+                      format: email
+                    verified:
+                      type: boolean
+                    primary:
+                      type: boolean
+    post:
+      tags:
+        - User
+      summary: Add an email address
+      operationId: addEmail
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                emails:
+                  type: array
+                  items:
+                    type: string
+                    format: email
+      responses:
+        '201':
+          description: Emails added
+    delete:
+      tags:
+        - User
+      summary: Delete email addresses
+      operationId: deleteEmail
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                emails:
+                  type: array
+                  items:
+                    type: string
+                    format: email
+      responses:
+        '204':
+          description: Emails deleted
+
+  /user/followers:
+    get:
+      tags:
+        - User
+      summary: List the authenticated user's followers
+      operationId: listMyFollowers
+      parameters:
+        - name: page
+          in: query
+          schema:
+            type: integer
+            default: 1
+      responses:
+        '200':
+          description: Followers
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: './components/schemas/User.yaml'
+
+  /user/following:
+    get:
+      tags:
+        - User
+      summary: List who the authenticated user is following
+      operationId: listMyFollowing
+      parameters:
+        - name: page
+          in: query
+          schema:
+            type: integer
+            default: 1
+      responses:
+        '200':
+          description: Followed users
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: './components/schemas/User.yaml'
+
+  /user/following/{username}:
+    parameters:
+      - $ref: './components/parameters/Username.yaml'
+    get:
+      tags:
+        - User
+      summary: Check if the authenticated user follows a user
+      operationId: checkMyFollowing
+      responses:
+        '204':
+          description: Currently following
+        '404':
+          description: Not following
+    put:
+      tags:
+        - User
+      summary: Follow a user
+      operationId: followUser
+      responses:
+        '204':
+          description: Now following
+    delete:
+      tags:
+        - User
+      summary: Unfollow a user
+      operationId: unfollowUser
+      responses:
+        '204':
+          description: Unfollowed
+
+  /user/keys:
+    get:
+      tags:
+        - User
+      summary: List the authenticated user's public keys
+      operationId: listMyPublicKeys
+      responses:
+        '200':
+          description: Public keys
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  type: object
+                  properties:
+                    id:
+                      type: integer
+                      format: int64
+                    key:
+                      type: string
+                    url:
+                      type: string
+                    title:
+                      type: string
+                    created_at:
+                      type: string
+                      format: date-time
+    post:
+      tags:
+        - User
+      summary: Add a public key for the authenticated user
+      operationId: createPublicKey
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [title, key]
+              properties:
+                title:
+                  type: string
+                key:
+                  type: string
+      responses:
+        '201':
+          description: Key added
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  id:
+                    type: integer
+                    format: int64
+                  key:
+                    type: string
+                  url:
+                    type: string
+                  title:
+                    type: string
+                  created_at:
+                    type: string
+                    format: date-time
+
+  /user/keys/{id}:
+    parameters:
+      - name: id
+        in: path
+        required: true
+        schema:
+          type: integer
+          format: int64
+    get:
+      tags:
+        - User
+      summary: Get a specific public key
+      operationId: getPublicKey
+      responses:
+        '200':
+          description: Public key
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  id:
+                    type: integer
+                    format: int64
+                  key:
+                    type: string
+                  url:
+                    type: string
+                  title:
+                    type: string
+                  created_at:
+                    type: string
+                    format: date-time
+        '404':
+          description: Key not found
+    delete:
+      tags:
+        - User
+      summary: Delete a public key
+      operationId: deletePublicKey
+      responses:
+        '204':
+          description: Key deleted
+        '404':
+          description: Key not found
+
+  /user/issues:
+    get:
+      tags:
+        - Issues
+      summary: List issues across repositories for the authenticated user
+      operationId: listUserIssues
+      parameters:
+        - name: state
+          in: query
+          description: Filter by state
+          schema:
+            type: string
+            enum: [open, closed]
+            default: open
+        - name: page
+          in: query
+          schema:
+            type: integer
+            default: 1
+        - name: limit
+          in: query
+          schema:
+            type: integer
+            default: 10
+      responses:
+        '200':
+          description: Issues across repositories
+          content:
+            application/json:
+              schema:
+                $ref: './components/schemas/Issues.yaml'
+
+  /user/orgs:
+    get:
+      tags:
+        - Organizations
+      summary: List the authenticated user's organizations
+      operationId: listMyOrgs
+      responses:
+        '200':
+          description: Organizations
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  type: object
+                  properties:
+                    id:
+                      type: integer
+                      format: int64
+                    username:
+                      type: string
+                    full_name:
+                      type: string
+                    avatar_url:
+                      type: string
+                    description:
+                      type: string
+                    website:
+                      type: string
+                    location:
+                      type: string
+    post:
+      tags:
+        - Organizations
+      summary: Create an organization for the authenticated user
+      operationId: createMyOrg
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [username]
+              properties:
+                username:
+                  type: string
+                full_name:
+                  type: string
+                description:
+                  type: string
+                website:
+                  type: string
+                location:
+                  type: string
+      responses:
+        '201':
+          description: Organization created
+
+  # ── Repositories ─────────────────────────────────────────────────────────────
+
+  /repos/topics/search:
+    get:
+      tags:
+        - Repositories
+      summary: Search repository topics
+      operationId: searchTopics
+      parameters:
+        - name: q
+          in: query
+          description: Topic search query
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Matching topics
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  type: string
+
+  /repos/arxiv/{id}:
+    parameters:
+      - name: id
+        in: path
+        required: true
+        description: ArXiv paper ID (e.g., `2301.00001`)
+        schema:
+          type: string
+    get:
+      tags:
+        - Repositories
+      summary: Get ArXiv paper metadata
+      description: Returns metadata for an ArXiv paper that can be used to pre-populate a repository description.
+      operationId: getArxivInfo
+      responses:
+        '200':
+          description: ArXiv paper metadata
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  title:
+                    type: string
+                  abstract:
+                    type: string
+                  authors:
+                    type: array
+                    items:
+                      type: string
+
+  /repos/{owner}/{repo}/stars:
+    parameters:
+      - $ref: './components/parameters/Owner.yaml'
+      - $ref: './components/parameters/Repository.yaml'
+    get:
+      tags:
+        - Repositories
+      summary: Get star count for a repository
+      operationId: getRepoStars
+      responses:
+        '200':
+          description: Number of stars
+          content:
+            application/json:
+              schema:
+                type: integer
+
+  /repos/{owner}/{repo}/readme:
+    parameters:
+      - $ref: './components/parameters/Owner.yaml'
+      - $ref: './components/parameters/Repository.yaml'
+    get:
+      tags:
+        - Repositories
+      summary: Get the README file for a repository
+      operationId: getReadme
+      responses:
+        '200':
+          description: README file content and metadata
+          content:
+            application/json:
+              schema:
+                $ref: './components/schemas/File.yaml'
+        '404':
+          description: README not found
+
+  /repos/{owner}/{repo}/file-access-jwt:
+    parameters:
+      - $ref: './components/parameters/Owner.yaml'
+      - $ref: './components/parameters/Repository.yaml'
+    post:
+      tags:
+        - Repositories
+      summary: Generate a file access JWT
+      description: |
+        Generates a short-lived RS256 JWT for unauthenticated access to a specific file or path prefix.
+        Useful for sharing files with external services like Google Colab or Run:ai JupyterLab
+        where authentication headers cannot be provided.
+
+        The returned `raw_url` can be opened directly in a browser or passed to an external service.
+      operationId: generateFileAccessJWT
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [path]
+              properties:
+                path:
+                  type: string
+                  description: |
+                    Path to the file or path prefix.
+                    Use `path/to/file.ipynb` for exact file access.
+                    Use `path/to/folder/*` for folder prefix access.
+                gitRef:
+                  type: string
+                  description: Git ref (branch, tag, commit SHA). Defaults to the default branch.
+      responses:
+        '200':
+          description: JWT and pre-built raw URL
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  jwt:
+                    type: string
+                    description: RS256 JWT token
+                  expires_in_seconds:
+                    type: integer
+                    format: int64
+                  raw_url:
+                    type: string
+                    description: Full URL to access the file with the embedded JWT
+        '503':
+          description: JWT signing not configured on this server
+
+  /repos/{owner}/{repo}/forks:
+    parameters:
+      - $ref: './components/parameters/Owner.yaml'
+      - $ref: './components/parameters/Repository.yaml'
+    get:
+      tags:
+        - Repositories
+      summary: List forks of a repository
+      operationId: listForks
+      responses:
+        '200':
+          description: List of forks
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: './components/schemas/Repository.yaml'
+
+  /repos/{owner}/{repo}/mirror-sync:
+    parameters:
+      - $ref: './components/parameters/Owner.yaml'
+      - $ref: './components/parameters/Repository.yaml'
+    post:
+      tags:
+        - Repositories
+      summary: Trigger a mirror sync
+      description: Forces an immediate sync of a mirrored repository from its upstream. Requires write access.
+      operationId: mirrorSync
+      responses:
+        '200':
+          description: Sync triggered
+
+  /repos/{owner}/{repo}/editorconfig/{filename}:
+    parameters:
+      - $ref: './components/parameters/Owner.yaml'
+      - $ref: './components/parameters/Repository.yaml'
+      - name: filename
+        in: path
+        required: true
+        description: File path to look up EditorConfig rules for
+        schema:
+          type: string
+    get:
+      tags:
+        - Repositories
+      summary: Get EditorConfig settings for a file
+      description: Returns the effective EditorConfig rules that apply to a given file path in the repository.
+      operationId: getEditorconfig
+      responses:
+        '200':
+          description: EditorConfig settings as a key-value object
+          content:
+            application/json:
+              schema:
+                type: object
+                additionalProperties:
+                  type: string
+        '404':
+          description: No .editorconfig found
+
+  # ── Commits ───────────────────────────────────────────────────────────────────
+
+  /repos/{owner}/{repo}/commits:
+    parameters:
+      - $ref: './components/parameters/Owner.yaml'
+      - $ref: './components/parameters/Repository.yaml'
+    get:
+      tags:
+        - Commits
+      summary: List commits for a repository
+      operationId: listCommits
+      parameters:
+        - name: sha
+          in: query
+          description: Branch, tag, or commit SHA to start listing from
+          schema:
+            type: string
+        - name: path
+          in: query
+          description: Only return commits that modified this file path
+          schema:
+            type: string
+        - name: page
+          in: query
+          schema:
+            type: integer
+            default: 1
+        - name: limit
+          in: query
+          schema:
+            type: integer
+            default: 10
+      responses:
+        '200':
+          description: List of commits
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: './components/schemas/Commit.yaml'
+
+  # ── Tags ─────────────────────────────────────────────────────────────────────
+
+  /repos/{owner}/{repo}/tags:
+    parameters:
+      - $ref: './components/parameters/Owner.yaml'
+      - $ref: './components/parameters/Repository.yaml'
+    get:
+      tags:
+        - Repositories
+      summary: List tags for a repository
+      operationId: listTags
+      responses:
+        '200':
+          description: List of tags
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  type: object
+                  properties:
+                    name:
+                      type: string
+                    commit:
+                      $ref: './components/schemas/Commit.yaml'
+
+  /repos/{owner}/{repo}/tags/{tag}:
+    parameters:
+      - $ref: './components/parameters/Owner.yaml'
+      - $ref: './components/parameters/Repository.yaml'
+      - name: tag
+        in: path
+        required: true
+        schema:
+          type: string
+    get:
+      tags:
+        - Repositories
+      summary: Get a single tag
+      operationId: getTag
+      responses:
+        '200':
+          description: Tag details
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  name:
+                    type: string
+                  commit:
+                    $ref: './components/schemas/Commit.yaml'
+        '404':
+          description: Tag not found
+
+  # ── Deploy Keys ───────────────────────────────────────────────────────────────
+
+  /repos/{owner}/{repo}/keys:
+    parameters:
+      - $ref: './components/parameters/Owner.yaml'
+      - $ref: './components/parameters/Repository.yaml'
+    get:
+      tags:
+        - Repositories
+      summary: List deploy keys for a repository
+      operationId: listDeployKeys
+      responses:
+        '200':
+          description: Deploy keys
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  type: object
+                  properties:
+                    id:
+                      type: integer
+                      format: int64
+                    key:
+                      type: string
+                    url:
+                      type: string
+                    title:
+                      type: string
+                    created_at:
+                      type: string
+                      format: date-time
+                    read_only:
+                      type: boolean
+    post:
+      tags:
+        - Repositories
+      summary: Add a deploy key
+      operationId: createDeployKey
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [title, key]
+              properties:
+                title:
+                  type: string
+                key:
+                  type: string
+      responses:
+        '201':
+          description: Deploy key added
+        '422':
+          description: Key already in use
+
+  /repos/{owner}/{repo}/keys/{id}:
+    parameters:
+      - $ref: './components/parameters/Owner.yaml'
+      - $ref: './components/parameters/Repository.yaml'
+      - name: id
+        in: path
+        required: true
+        schema:
+          type: integer
+          format: int64
+    get:
+      tags:
+        - Repositories
+      summary: Get a deploy key
+      operationId: getDeployKey
+      responses:
+        '200':
+          description: Deploy key
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  id:
+                    type: integer
+                    format: int64
+                  key:
+                    type: string
+                  url:
+                    type: string
+                  title:
+                    type: string
+                  created_at:
+                    type: string
+                    format: date-time
+                  read_only:
+                    type: boolean
+        '404':
+          description: Key not found
+    delete:
+      tags:
+        - Repositories
+      summary: Delete a deploy key
+      operationId: deleteDeployKey
+      responses:
+        '204':
+          description: Key deleted
+        '404':
+          description: Key not found
+
+  # ── Pull Requests ─────────────────────────────────────────────────────────────
+
+  /repos/{owner}/{repo}/pulls:
+    parameters:
+      - $ref: './components/parameters/Owner.yaml'
+      - $ref: './components/parameters/Repository.yaml'
+    get:
+      tags:
+        - Issues
+      summary: List pull requests for a repository
+      operationId: listPulls
+      parameters:
+        - name: state
+          in: query
+          schema:
+            type: string
+            enum: [open, closed]
+            default: open
+        - name: page
+          in: query
+          schema:
+            type: integer
+            default: 1
+        - name: limit
+          in: query
+          schema:
+            type: integer
+            default: 10
+      responses:
+        '200':
+          description: Pull requests
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: './components/schemas/Issue.yaml'
+
+  /repos/{owner}/{repo}/pulls/{index}:
+    parameters:
+      - $ref: './components/parameters/Owner.yaml'
+      - $ref: './components/parameters/Repository.yaml'
+      - name: index
+        in: path
+        required: true
+        schema:
+          type: integer
+          format: int64
+    get:
+      tags:
+        - Issues
+      summary: Get a pull request
+      operationId: getPull
+      responses:
+        '200':
+          description: Pull request details
+          content:
+            application/json:
+              schema:
+                $ref: './components/schemas/Issue.yaml'
+        '404':
+          description: Pull request not found
+
+  # ── Issue Comments ────────────────────────────────────────────────────────────
+
+  /repos/{owner}/{repo}/issues/comments:
+    parameters:
+      - $ref: './components/parameters/Owner.yaml'
+      - $ref: './components/parameters/Repository.yaml'
+    get:
+      tags:
+        - Issues
+      summary: List all issue comments in a repository
+      operationId: listRepoIssueComments
+      responses:
+        '200':
+          description: All comments in the repository
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  type: object
+                  properties:
+                    id:
+                      type: integer
+                      format: int64
+                    html_url:
+                      type: string
+                    user:
+                      $ref: './components/schemas/User.yaml'
+                    body:
+                      type: string
+                    created_at:
+                      type: string
+                      format: date-time
+                    updated_at:
+                      type: string
+                      format: date-time
+
+  /repos/{owner}/{repo}/issues/comments/{id}:
+    parameters:
+      - $ref: './components/parameters/Owner.yaml'
+      - $ref: './components/parameters/Repository.yaml'
+      - name: id
+        in: path
+        required: true
+        schema:
+          type: integer
+          format: int64
+    patch:
+      tags:
+        - Issues
+      summary: Edit an issue comment
+      operationId: editIssueComment
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [body]
+              properties:
+                body:
+                  type: string
+      responses:
+        '200':
+          description: Updated comment
+        '404':
+          description: Comment not found
+
+  /repos/{owner}/{repo}/issues/{index}/comments:
+    parameters:
+      - $ref: './components/parameters/Owner.yaml'
+      - $ref: './components/parameters/Repository.yaml'
+      - name: index
+        in: path
+        required: true
+        schema:
+          type: integer
+          format: int64
+    get:
+      tags:
+        - Issues
+      summary: List comments on an issue
+      operationId: listIssueComments
+      responses:
+        '200':
+          description: Comments on the issue
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  type: object
+                  properties:
+                    id:
+                      type: integer
+                      format: int64
+                    html_url:
+                      type: string
+                    user:
+                      $ref: './components/schemas/User.yaml'
+                    body:
+                      type: string
+                    created_at:
+                      type: string
+                      format: date-time
+                    updated_at:
+                      type: string
+                      format: date-time
+    post:
+      tags:
+        - Issues
+      summary: Add a comment to an issue
+      operationId: createIssueComment
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [body]
+              properties:
+                body:
+                  type: string
+      responses:
+        '201':
+          description: Comment created
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  id:
+                    type: integer
+                    format: int64
+                  html_url:
+                    type: string
+                  user:
+                    $ref: './components/schemas/User.yaml'
+                  body:
+                    type: string
+                  created_at:
+                    type: string
+                    format: date-time
+                  updated_at:
+                    type: string
+                    format: date-time
+
+  /repos/{owner}/{repo}/issues/{index}/comments/{id}:
+    parameters:
+      - $ref: './components/parameters/Owner.yaml'
+      - $ref: './components/parameters/Repository.yaml'
+      - name: index
+        in: path
+        required: true
+        schema:
+          type: integer
+          format: int64
+      - name: id
+        in: path
+        required: true
+        schema:
+          type: integer
+          format: int64
+    patch:
+      tags:
+        - Issues
+      summary: Edit a comment on an issue
+      operationId: editIssueCommentOnIssue
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [body]
+              properties:
+                body:
+                  type: string
+      responses:
+        '200':
+          description: Updated comment
+        '404':
+          description: Comment not found
+    delete:
+      tags:
+        - Issues
+      summary: Delete a comment on an issue
+      operationId: deleteIssueComment
+      responses:
+        '204':
+          description: Comment deleted
+        '404':
+          description: Comment not found
+
+  # ── Issue Labels ──────────────────────────────────────────────────────────────
+
+  /repos/{owner}/{repo}/issues/{index}/labels:
+    parameters:
+      - $ref: './components/parameters/Owner.yaml'
+      - $ref: './components/parameters/Repository.yaml'
+      - name: index
+        in: path
+        required: true
+        schema:
+          type: integer
+          format: int64
+    get:
+      tags:
+        - Issues
+      summary: List labels on an issue
+      operationId: listIssueLabels
+      responses:
+        '200':
+          description: Labels on the issue
+          content:
+            application/json:
+              schema:
+                $ref: './components/schemas/Labels.yaml'
+    post:
+      tags:
+        - Issues
+      summary: Add labels to an issue
+      operationId: addIssueLabels
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                labels:
+                  type: array
+                  items:
+                    type: integer
+                    format: int64
+                  description: Array of label IDs to add
+      responses:
+        '200':
+          description: Updated labels list
+          content:
+            application/json:
+              schema:
+                $ref: './components/schemas/Labels.yaml'
+    put:
+      tags:
+        - Issues
+      summary: Replace all labels on an issue
+      operationId: replaceIssueLabels
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                labels:
+                  type: array
+                  items:
+                    type: integer
+                    format: int64
+                  description: Array of label IDs to set (replaces all existing labels)
+      responses:
+        '200':
+          description: New labels list
+          content:
+            application/json:
+              schema:
+                $ref: './components/schemas/Labels.yaml'
+    delete:
+      tags:
+        - Issues
+      summary: Remove all labels from an issue
+      operationId: clearIssueLabels
+      responses:
+        '204':
+          description: All labels removed
+
+  /repos/{owner}/{repo}/issues/{index}/labels/{id}:
+    parameters:
+      - $ref: './components/parameters/Owner.yaml'
+      - $ref: './components/parameters/Repository.yaml'
+      - name: index
+        in: path
+        required: true
+        schema:
+          type: integer
+          format: int64
+      - name: id
+        in: path
+        required: true
+        schema:
+          type: integer
+          format: int64
+    delete:
+      tags:
+        - Issues
+      summary: Remove a specific label from an issue
+      operationId: removeIssueLabel
+      responses:
+        '204':
+          description: Label removed
+        '404':
+          description: Label not found on this issue
+
+  # ── Repo Labels ───────────────────────────────────────────────────────────────
+
+  /repos/{owner}/{repo}/labels:
+    parameters:
+      - $ref: './components/parameters/Owner.yaml'
+      - $ref: './components/parameters/Repository.yaml'
+    get:
+      tags:
+        - Issues
+      summary: List labels for a repository
+      operationId: listLabels
+      responses:
+        '200':
+          description: Repository labels
+          content:
+            application/json:
+              schema:
+                $ref: './components/schemas/Labels.yaml'
+    post:
+      tags:
+        - Issues
+      summary: Create a label
+      operationId: createLabel
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [name, color]
+              properties:
+                name:
+                  type: string
+                color:
+                  type: string
+                  description: Hex color code with leading `#` (exactly 7 characters, e.g. `#ff0000`)
+      responses:
+        '201':
+          description: Label created
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  id:
+                    type: integer
+                    format: int64
+                  name:
+                    type: string
+                  color:
+                    type: string
+                  url:
+                    type: string
+
+  /repos/{owner}/{repo}/labels/{id}:
+    parameters:
+      - $ref: './components/parameters/Owner.yaml'
+      - $ref: './components/parameters/Repository.yaml'
+      - name: id
+        in: path
+        required: true
+        schema:
+          type: integer
+          format: int64
+    get:
+      tags:
+        - Issues
+      summary: Get a label
+      operationId: getLabel
+      responses:
+        '200':
+          description: Label details
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  id:
+                    type: integer
+                    format: int64
+                  name:
+                    type: string
+                  color:
+                    type: string
+                  url:
+                    type: string
+        '404':
+          description: Label not found
+    patch:
+      tags:
+        - Issues
+      summary: Edit a label
+      operationId: editLabel
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                name:
+                  type: string
+                color:
+                  type: string
+      responses:
+        '200':
+          description: Updated label
+        '404':
+          description: Label not found
+    delete:
+      tags:
+        - Issues
+      summary: Delete a label
+      operationId: deleteLabel
+      responses:
+        '204':
+          description: Label deleted
+        '404':
+          description: Label not found
+
+  # ── Milestones ────────────────────────────────────────────────────────────────
+
+  /repos/{owner}/{repo}/milestones:
+    parameters:
+      - $ref: './components/parameters/Owner.yaml'
+      - $ref: './components/parameters/Repository.yaml'
+    get:
+      tags:
+        - Issues
+      summary: List milestones for a repository
+      operationId: listMilestones
+      responses:
+        '200':
+          description: Repository milestones
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  type: object
+                  properties:
+                    id:
+                      type: integer
+                      format: int64
+                    title:
+                      type: string
+                    description:
+                      type: string
+                    state:
+                      type: string
+                      enum: [open, closed]
+                    open_issues:
+                      type: integer
+                    closed_issues:
+                      type: integer
+                    closed_at:
+                      type: string
+                      format: date-time
+                      nullable: true
+                    due_on:
+                      type: string
+                      format: date-time
+                      nullable: true
+    post:
+      tags:
+        - Issues
+      summary: Create a milestone
+      operationId: createMilestone
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                title:
+                  type: string
+                description:
+                  type: string
+                due_on:
+                  type: string
+                  format: date-time
+      responses:
+        '201':
+          description: Milestone created
+
+  /repos/{owner}/{repo}/milestones/{id}:
+    parameters:
+      - $ref: './components/parameters/Owner.yaml'
+      - $ref: './components/parameters/Repository.yaml'
+      - name: id
+        in: path
+        required: true
+        schema:
+          type: integer
+          format: int64
+    get:
+      tags:
+        - Issues
+      summary: Get a milestone
+      operationId: getMilestone
+      responses:
+        '200':
+          description: Milestone details
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  id:
+                    type: integer
+                    format: int64
+                  title:
+                    type: string
+                  description:
+                    type: string
+                  state:
+                    type: string
+                    enum: [open, closed]
+                  open_issues:
+                    type: integer
+                  closed_issues:
+                    type: integer
+                  closed_at:
+                    type: string
+                    format: date-time
+                    nullable: true
+                  due_on:
+                    type: string
+                    format: date-time
+                    nullable: true
+        '404':
+          description: Milestone not found
+    patch:
+      tags:
+        - Issues
+      summary: Edit a milestone
+      operationId: editMilestone
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                title:
+                  type: string
+                description:
+                  type: string
+                state:
+                  type: string
+                  enum: [open, closed]
+                due_on:
+                  type: string
+                  format: date-time
+      responses:
+        '200':
+          description: Updated milestone
+        '404':
+          description: Milestone not found
+    delete:
+      tags:
+        - Issues
+      summary: Delete a milestone
+      operationId: deleteMilestone
+      responses:
+        '204':
+          description: Milestone deleted
+        '404':
+          description: Milestone not found
+
+  # ── Annotation Workspace Lifecycle ────────────────────────────────────────────
+
+  /repos/{owner}/{repo}/annotations/ready:
+    parameters:
+      - $ref: './components/parameters/Owner.yaml'
+      - $ref: './components/parameters/Repository.yaml'
+    get:
+      tags:
+        - Annotations
+      summary: Check annotation workspace readiness
+      description: Returns whether the Label Studio workspace for this repository is ready to accept requests.
+      operationId: checkWorkspaceReadiness
+      parameters:
+        - name: service
+          in: query
+          description: "Workspace service type: 0 = Label Studio (Git), 1 = Label Studio (S3)"
+          schema:
+            type: integer
+            default: 0
+      responses:
+        '200':
+          description: Workspace is ready
+        '404':
+          description: Workspace not found or not yet started
+
+  /repos/{owner}/{repo}/annotations/start:
+    parameters:
+      - $ref: './components/parameters/Owner.yaml'
+      - $ref: './components/parameters/Repository.yaml'
+    post:
+      tags:
+        - Annotations
+      summary: Start an annotation workspace
+      description: Provisions and starts a Label Studio workspace for this repository. May take up to a few minutes; poll `/ready` to confirm readiness.
+      operationId: startWorkspace
+      parameters:
+        - name: service
+          in: query
+          description: "Workspace service type: 0 = Label Studio (Git), 1 = Label Studio (S3)"
+          schema:
+            type: integer
+            default: 0
+      responses:
+        '200':
+          description: Workspace start initiated
+
+  /repos/{owner}/{repo}/annotations/workspace-usage:
+    parameters:
+      - $ref: './components/parameters/Owner.yaml'
+      - $ref: './components/parameters/Repository.yaml'
+    get:
+      tags:
+        - Annotations
+      summary: Get annotation workspace usage
+      description: Returns current resource usage metrics for the repository's annotation workspace.
+      operationId: getWorkspaceUsage
+      parameters:
+        - name: service
+          in: query
+          schema:
+            type: integer
+            default: 0
+      responses:
+        '200':
+          description: Workspace usage metrics
+
+  /repos/{owner}/{repo}/annotations/keep-alive:
+    parameters:
+      - $ref: './components/parameters/Owner.yaml'
+      - $ref: './components/parameters/Repository.yaml'
+    get:
+      tags:
+        - Annotations
+      summary: Keep annotation workspace alive
+      description: |
+        Sends a keep-alive signal to the annotation workspace to prevent it from being
+        shut down due to inactivity. Call this periodically (e.g., every few minutes)
+        while users are actively using the workspace.
+      operationId: keepWorkspaceAlive
+      parameters:
+        - name: service
+          in: query
+          schema:
+            type: integer
+            default: 0
+      responses:
+        '200':
+          description: Keep-alive acknowledged
+
+  # ── Organizations ─────────────────────────────────────────────────────────────
+
+  /orgs/{orgname}:
+    parameters:
+      - $ref: './components/parameters/Orgname.yaml'
+    get:
+      tags:
+        - Organizations
+      summary: Get an organization
+      operationId: getOrg
+      responses:
+        '200':
+          description: Organization details
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  id:
+                    type: integer
+                    format: int64
+                  username:
+                    type: string
+                  full_name:
+                    type: string
+                  avatar_url:
+                    type: string
+                  description:
+                    type: string
+                  website:
+                    type: string
+                  location:
+                    type: string
+        '404':
+          description: Organization not found
+    patch:
+      tags:
+        - Organizations
+      summary: Edit an organization
+      operationId: editOrg
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                full_name:
+                  type: string
+                description:
+                  type: string
+                website:
+                  type: string
+                location:
+                  type: string
+      responses:
+        '200':
+          description: Organization updated
+        '403':
+          description: Not authorized
+
+  /orgs/{orgname}/teams:
+    parameters:
+      - $ref: './components/parameters/Orgname.yaml'
+    get:
+      tags:
+        - Organizations
+      summary: List teams in an organization
+      description: Returns teams that the authenticated user is a member of. Org owners see all teams.
+      operationId: listOrgTeams
+      responses:
+        '200':
+          description: Teams in the organization
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: './components/schemas/Team.yaml'
+
+  /orgs/{orgname}/teams/repo:
+    parameters:
+      - $ref: './components/parameters/Orgname.yaml'
+    get:
+      tags:
+        - Organizations
+      summary: Search teams in an organization by name
+      description: Searches teams in an organization by keyword. Useful for autocomplete when adding a repository to a team.
+      operationId: listTeamsForRepo
+      parameters:
+        - name: q
+          in: query
+          description: Team name search keyword
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Matching teams
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: './components/schemas/Team.yaml'
+
+  /orgs/{orgname}/members:
+    parameters:
+      - $ref: './components/parameters/Orgname.yaml'
+    get:
+      tags:
+        - Organizations
+      summary: List members of an organization
+      operationId: listOrgMembers
+      responses:
+        '200':
+          description: Organization members
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: './components/schemas/User.yaml'
+
+  /orgs/{orgname}/teams/{teamid}/members/{username}:
+    parameters:
+      - $ref: './components/parameters/Orgname.yaml'
+      - name: teamid
+        in: path
+        required: true
+        schema:
+          type: integer
+          format: int64
+      - name: username
+        in: path
+        required: true
+        schema:
+          type: string
+    put:
+      tags:
+        - Organizations
+      summary: Add a member to a team
+      description: Requires org owner permissions.
+      operationId: addTeamMember
+      responses:
+        '204':
+          description: Member added
+        '403':
+          description: Not org owner
+        '404':
+          description: Team or user not found
+    delete:
+      tags:
+        - Organizations
+      summary: Remove a member from a team
+      description: Requires org owner permissions.
+      operationId: removeTeamMember
+      responses:
+        '204':
+          description: Member removed
+        '403':
+          description: Not org owner
+        '404':
+          description: Team or user not found
+
+  /orgs/{orgname}/teams/{teamid}/members/invite:
+    parameters:
+      - $ref: './components/parameters/Orgname.yaml'
+      - name: teamid
+        in: path
+        required: true
+        schema:
+          type: integer
+          format: int64
+    post:
+      tags:
+        - Organizations
+      summary: Invite users to a team by email
+      description: Sends invitation emails to the provided addresses. Requires org owner permissions.
+      operationId: inviteTeamMembers
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [emails]
+              properties:
+                emails:
+                  type: array
+                  items:
+                    type: string
+                    format: email
+      responses:
+        '204':
+          description: Invitations sent
+        '403':
+          description: Not org owner
+
+  /orgs/{orgname}/teams/{teamid}/annotations/projects:
+    parameters:
+      - $ref: './components/parameters/Orgname.yaml'
+      - name: teamid
+        in: path
+        required: true
+        schema:
+          type: integer
+          format: int64
+    get:
+      tags:
+        - Annotations
+      summary: List Label Studio projects assigned to a team
+      description: Lists all annotation projects that this team has access to, across all repositories in the organization. Requires org owner or team member.
+      operationId: listTeamLabelStudioProjects
+      responses:
+        '200':
+          description: Label Studio projects assigned to the team
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  type: object
+                  properties:
+                    id:
+                      type: integer
+                      format: int64
+                    repo_id:
+                      type: integer
+                      format: int64
+                    repo_name:
+                      type: string
+                    repo_owner:
+                      type: string
+                    project_id:
+                      type: integer
+                      format: int64
+                      description: -1 means wildcard access to all projects
+                    project_name:
+                      type: string
+                    access_level:
+                      type: string
+                      enum: [none, annotator]
+                    created_unix:
+                      type: integer
+                      format: int64
+
 components:
   securitySchemes:
     basicAuth:

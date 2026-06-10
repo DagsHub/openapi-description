@@ -1,0 +1,49 @@
+type: object
+properties:
+  id:
+    type: integer
+  owner:
+    $ref: './User.yaml'
+  name:
+    type: string
+  full_name:
+    type: string
+  description:
+    type: string
+  private:
+    type: boolean
+  fork:
+    type: boolean
+  parent:
+    type: object
+    nullable: true
+  empty:
+    type: boolean
+  mirror:
+    type: boolean
+  size:
+    type: integer
+  html_url:
+    type: string
+  ssh_url:
+    type: string
+  clone_url:
+    type: string
+  website:
+    type: string
+  stars_count:
+    type: integer
+  forks_count:
+    type: integer
+  watchers_count:
+    type: integer
+  open_issues_count:
+    type: integer
+  default_branch:
+    type: string
+  created_at:
+    type: string
+    format: date-time
+  updated_at:
+    type: string
+    format: date-time

@@ -1,0 +1,78 @@
+type: object
+properties:
+  commit:
+    type: object
+    properties:
+      id:
+        type: string
+      message:
+        type: string
+      url:
+        type: string
+      author:
+        type: object
+        properties:
+          name:
+            type: string
+          email:
+            type: string
+          username:
+            type: string
+      committer:
+        type: object
+        properties:
+          name:
+            type: string
+          email:
+            type: string
+          username:
+            type: string
+      added:
+        type: array
+        items:
+          type: string
+        nullable: true
+      removed:
+        type: array
+        items:
+          type: string
+        nullable: true
+      modified:
+        type: array
+        items:
+          type: string
+        nullable: true
+      timestamp:
+        type: string
+        format: date-time
+  files:
+    type: array
+    items:
+      type: object
+      properties:
+        filename:
+          type: string
+        sha:
+          type: string
+        blob_url:
+          type: string
+        additions:
+          type: integer
+        deletions:
+          type: integer
+        changes:
+          type: integer
+        status:
+          type: string
+  stats:
+    type: object
+    properties:
+      additions:
+        type: integer
+      deletions:
+        type: integer
+      total:
+        type: integer
+  experiment:
+    type: object
+    nullable: true

@@ -1,0 +1,6 @@
+type: object
+properties:
+  experiments:
+    type: object
+    additionalProperties:
+      $ref: './Experiment.yaml'

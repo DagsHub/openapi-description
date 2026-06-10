@@ -7,9 +7,7 @@ items:
       description: Name/path of the bucket
     protocol:
       type: string
-      enum: [s3, gs]
-      description: Protocol used by the integration
+      description: Protocol used by the integration (e.g. s3, gs, azure, http)
     list_path:
       type: string
       description: URL to list the root of this bucket
-

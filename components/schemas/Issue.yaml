@@ -2,14 +2,17 @@ type: object
 properties:
   id:
     type: integer
+    format: int64
   number:
     type: integer
+    format: int64
+    description: Issue index within the repository
   user:
     $ref: './User.yaml'
   title:
-    $ref: './Title.yaml'
+    type: string
   body:
-    $ref: './Body.yaml'
+    type: string
   labels:
     type: array
     items:
@@ -25,6 +28,7 @@ properties:
           type: string
   milestone:
     type: object
+    nullable: true
     properties:
       id:
         type: integer
@@ -42,56 +46,21 @@ properties:
         type: string
       due_on:
         type: string
-    additionalProperties: false
   assignee:
-    type: object
-    properties:
-      id:
-        type: integer
-      login:
-        type: string
-      full_name:
-        type: string
-      avatar_url:
-        type: string
-      username:
-        type: string
-    additionalProperties: false
+    $ref: './User.yaml'
+    nullable: true
   state:
     type: string
+    enum: [open, closed]
   comments:
     type: integer
   created_at:
     type: string
+    format: date-time
   updated_at:
     type: string
+    format: date-time
   pull_request:
     type: object
-  closed: 
-    type: boolean
-required:
-  - title
-  - body
-  - assignee
-  - milestone
-  - labels
-  - closed
-example:
-  id: 72
-  number: 1
-  state: "open"
-  title: "test issue"
-  body: ""
-  user:
-    id: 3
-    username: "user1"
-    full_name: ""
-    email: "fake@local"
-    avatar_url: "https://secure.gravatar.com/avatar/0207f4280f6c1bd45e1a2ed7cb1cca3d"
-  labels: ["bug"]
-  assignee: null
-  milestone: null
-  comments: 1
-  pull_request: null
-  created_at: "2016-03-05T13:18:51-05:00"
-  updated_at: "2016-03-05T13:18:51-05:00"
+    nullable: true
+    description: Present when the issue is associated with a pull request

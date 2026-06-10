@@ -2,12 +2,21 @@ type: object
 properties:
   id:
     type: integer
+    format: int64
   login:
     type: string
+  username:
+    type: string
+    description: Alias for login (legacy compatibility)
   full_name:
     type: string
   avatar_url:
     type: string
-  username:
+  public_email:
     type: string
-additionalProperties: false
+  website:
+    type: string
+  company:
+    type: string
+  description:
+    type: string

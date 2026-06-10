@@ -2,5 +2,13 @@ type: object
 properties:
   experiments:
     type: object
+    description: Map of experiment ID to experiment details
     additionalProperties:
       $ref: './Experiment.yaml'
+  isEditor:
+    type: boolean
+    description: Whether the authenticated user can edit experiments in this repo
+  nextPageToken:
+    type: string
+    description: Pagination token for the next page of results (empty string when no more pages)
+    nullable: true

@@ -1873,9 +1873,15 @@ paths:
           content:
             application/json:
               schema:
-                type: array
-                items:
-                  type: string
+                type: object
+                properties:
+                  results:
+                    type: array
+                    items:
+                      type: string
+                    description: Matching topic names
+                  success:
+                    type: boolean
 
   /repos/arxiv/{id}:
     parameters:
@@ -2097,7 +2103,52 @@ paths:
               schema:
                 type: array
                 items:
-                  $ref: './components/schemas/Commit.yaml'
+                  type: object
+                  description: Commit summary (PayloadCommit — flat, no files/stats wrapper)
+                  properties:
+                    id:
+                      type: string
+                      description: Full commit SHA
+                    message:
+                      type: string
+                    url:
+                      type: string
+                    author:
+                      type: object
+                      properties:
+                        name:
+                          type: string
+                        email:
+                          type: string
+                        username:
+                          type: string
+                    committer:
+                      type: object
+                      properties:
+                        name:
+                          type: string
+                        email:
+                          type: string
+                        username:
+                          type: string
+                    added:
+                      type: array
+                      items:
+                        type: string
+                      nullable: true
+                    removed:
+                      type: array
+                      items:
+                        type: string
+                      nullable: true
+                    modified:
+                      type: array
+                      items:
+                        type: string
+                      nullable: true
+                    timestamp:
+                      type: string
+                      format: date-time
 
   # ── Tags ─────────────────────────────────────────────────────────────────────
 

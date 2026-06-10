@@ -2,6 +2,7 @@ type: object
 properties:
   id:
     type: integer
+    format: int64
   owner:
     $ref: './User.yaml'
   name:
@@ -15,7 +16,7 @@ properties:
   fork:
     type: boolean
   parent:
-    type: object
+    $ref: './Repository.yaml'
     nullable: true
   empty:
     type: boolean
@@ -23,6 +24,7 @@ properties:
     type: boolean
   size:
     type: integer
+    format: int64
   html_url:
     type: string
   ssh_url:
@@ -41,9 +43,21 @@ properties:
     type: integer
   default_branch:
     type: string
+  default_landing_tab:
+    type: string
   created_at:
     type: string
     format: date-time
   updated_at:
     type: string
     format: date-time
+  permissions:
+    type: object
+    nullable: true
+    properties:
+      admin:
+        type: boolean
+      push:
+        type: boolean
+      pull:
+        type: boolean

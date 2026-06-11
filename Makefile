@@ -49,14 +49,21 @@ dist/admin-api-interactive.html: admin-spec.yaml
 	mkdir -p dist
 	$(MAKE) _embed-swagger-html SRC=admin-spec.yaml OUT=$@ TITLE="DagsHub Admin API"
 
-# Converts SRC spec to JSON (via yq), patches the servers block, embeds
-# everything into a single Swagger UI HTML — no PyYAML, no server needed.
+# Converts SRC spec to JSON (via yq), patches the servers block with a
+# {host} variable so the URL is editable in the Swagger UI "Servers" dropdown,
+# then embeds everything into a single HTML file.
 # Requires: yq (https://github.com/mikefarah/yq)
 _embed-swagger-html:
-	yq -o json '.servers = [{"url": "$(SERVER_URL)/api/v1"}]' $(SRC) | \
+	yq -o json '.' $(SRC) | \
 	python3 -c "\
-import sys;\
-spec_json = sys.stdin.read().strip();\
+import sys, json;\
+from urllib.parse import urlparse;\
+parsed = urlparse('$(SERVER_URL)');\
+scheme = parsed.scheme or 'https';\
+host = parsed.netloc;\
+data = json.loads(sys.stdin.read());\
+data['servers'] = [{'url': scheme + '://{host}/api/v1', 'variables': {'host': {'default': host, 'description': 'Your DagsHub instance hostname (e.g. dagshub.com or your-company.dagshub.io)'}}}];\
+spec_json = json.dumps(data);\
 html = (\
 '<!DOCTYPE html>\n'\
 '<html lang=\"en\">\n'\

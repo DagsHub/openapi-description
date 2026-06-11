@@ -41,13 +41,13 @@ serve-admin: _serve-setup-admin
 
 _serve-setup-public:
 	mkdir -p $(SERVE_DIR)/public
-	sed 's|https://dagshub.com|$(SERVER_URL)|g' spec.yaml > $(SERVE_DIR)/public/spec.yaml
-	$(MAKE) _swagger-html SPEC=spec.yaml DIR=$(SERVE_DIR)/public TITLE="DagsHub API"
+	python3 -c "import re; f='spec.yaml'; t=open(f).read(); t=re.sub(r'(?m)^servers:.*?(?=^\S)', 'servers:\n  - url: $(SERVER_URL)/api/v1\n\n', t, flags=re.DOTALL); open('$(SERVE_DIR)/public/spec.yaml','w').write(t)"
+	$(MAKE) _swagger-html DIR=$(SERVE_DIR)/public TITLE="DagsHub API"
 
 _serve-setup-admin:
 	mkdir -p $(SERVE_DIR)/admin
-	sed 's|https://dagshub.com|$(SERVER_URL)|g' admin-spec.yaml > $(SERVE_DIR)/admin/spec.yaml
-	$(MAKE) _swagger-html SPEC=admin-spec.yaml DIR=$(SERVE_DIR)/admin TITLE="DagsHub Admin API"
+	python3 -c "import re; f='admin-spec.yaml'; t=open(f).read(); t=re.sub(r'(?m)^servers:.*?(?=^\S)', 'servers:\n  - url: $(SERVER_URL)/api/v1\n\n', t, flags=re.DOTALL); open('$(SERVE_DIR)/admin/spec.yaml','w').write(t)"
+	$(MAKE) _swagger-html DIR=$(SERVE_DIR)/admin TITLE="DagsHub Admin API"
 
 # Writes a Swagger UI index.html that loads spec.yaml from the same directory.
 # Uses CDN assets — requires internet access on first load.

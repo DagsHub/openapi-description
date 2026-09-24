@@ -2,7 +2,7 @@
 openapi: 3.0.3
 info:
   title: DagsHub Admin API
-  version: 1.0.0
+  version: 1.1.0
   description: |
     Admin API for on-premise DagsHub sysadmin automation. All endpoints require admin privileges.
 
@@ -218,6 +218,62 @@ components:
         team_name:
           type: string
 
+    BackgroundTask:
+      type: object
+      description: Descriptor for a background workflow that this API started.
+      properties:
+        task_id:
+          type: string
+          description: Workflow ID. For cascade delete this is `cascade_delete_user_<id>` or `cascade_delete_organization_<id>`.
+        task_name:
+          type: string
+          description: Workflow name. For cascade delete this is `cascade_delete`.
+        task_status:
+          type: string
+          enum: [task-initiated, task-started, task-succeeded, task-failed]
+          description: Status at enqueue time. A successful cascade delete enqueue returns `task-initiated`.
+        task_error:
+          type: string
+          description: Error message when the workflow failed. Omitted while the workflow runs.
+        task_meta:
+          type: string
+          description: Optional extra metadata.
+
+  parameters:
+    cascade:
+      name: cascade
+      in: query
+      required: false
+      schema:
+        type: boolean
+        default: false
+      description: |
+        If true, delete the target and the dependent resources that block ordinary deletion.
+        The request starts a background workflow and returns 202.
+        If false or omitted, the request runs ordinary deletion and returns 204.
+    deleteStorage:
+      name: delete_storage
+      in: query
+      required: false
+      schema:
+        type: boolean
+        default: false
+      description: |
+        If true, the cascade workflow also deletes DagsHub-managed object storage for deleted repositories.
+        This includes DagsHub Storage, MLflow artifacts, previews, and internal metadata.
+        This flag requires `cascade=true`. A request with `delete_storage=true` and `cascade=false` returns 400.
+    deleteUserSuppliedStorage:
+      name: delete_user_supplied_storage
+      in: query
+      required: false
+      schema:
+        type: boolean
+        default: false
+      description: |
+        If true, the cascade workflow also deletes objects in customer-owned buckets that the deleted repositories used.
+        This flag requires `cascade=true` and `delete_storage=true`. Other combinations return 400.
+        If the owner uses user-supplied storage and this flag is false, a storage-deleting cascade delete returns 422.
+
 paths:
   # ── User Management ──────────────────────────────────────────────────────────
 
@@ -370,19 +426,42 @@ paths:
       tags: [Users]
       summary: Delete a user
       operationId: adminDeleteUser
+      description: |
+        Delete a user account. This route does not delete organizations. Use `DELETE /admin/orgs/{orgname}` for that.
+
+        Ordinary deletion (`cascade` false or omitted) is synchronous. It returns 204 when the account has no blocking dependents. It returns 422 when the user owns repositories or has organization memberships.
+
+        Cascade deletion (`cascade=true`) starts a background workflow and returns 202. The workflow deletes owned repositories and sole-member organizations. It does not delete other organization members. It does not delete content in other owners' repositories. If the user is the last owner of a multi-member organization, the API returns 422. A replacement owner is required before cascade delete can proceed.
       parameters:
         - name: username
           in: path
           required: true
           schema:
             type: string
+        - $ref: '#/components/parameters/cascade'
+        - $ref: '#/components/parameters/deleteStorage'
+        - $ref: '#/components/parameters/deleteUserSuppliedStorage'
       responses:
+        '202':
+          description: Cascade delete workflow started
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/BackgroundTask'
         '204':
           description: User deleted
+        '400':
+          description: Query parameter is malformed, repeated, or uses an illegal combination of flags
         '404':
           description: User not found
         '422':
-          description: User cannot be deleted (e.g., owns repositories or organizations)
+          description: |
+            The user cannot be deleted. Common causes:
+            - The path names an organization. Use `DELETE /admin/orgs/{orgname}`.
+            - Ordinary deletion, and the user owns repositories or has organization memberships.
+            - Cascade deletion, and the user is the last owner of a multi-member organization.
+            - A cascade delete for this user is already running.
+            - `delete_storage=true` would delete user-supplied bucket data without `delete_user_supplied_storage=true`.
 
   /admin/users/{username}/keys:
     post:
@@ -578,6 +657,46 @@ paths:
           description: Mapping not found
 
   # ── Organization & Team Management ───────────────────────────────────────────
+
+  /admin/orgs/{orgname}:
+    delete:
+      tags: [Organizations]
+      summary: Delete an organization
+      operationId: adminDeleteOrg
+      description: |
+        Delete an organization.
+
+        Ordinary deletion (`cascade` false or omitted) is synchronous. It returns 204 when the organization has no blocking dependents. It returns 422 when the organization owns repositories.
+
+        Cascade deletion (`cascade=true`) starts a background workflow and returns 202. The workflow deletes repositories owned by the organization, plus organization teams, memberships, OIDC mappings, and Label Studio team access. It does not delete member user accounts or their personal repositories.
+      parameters:
+        - name: orgname
+          in: path
+          required: true
+          schema:
+            type: string
+        - $ref: '#/components/parameters/cascade'
+        - $ref: '#/components/parameters/deleteStorage'
+        - $ref: '#/components/parameters/deleteUserSuppliedStorage'
+      responses:
+        '202':
+          description: Cascade delete workflow started
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/BackgroundTask'
+        '204':
+          description: Organization deleted
+        '400':
+          description: Query parameter is malformed, repeated, or uses an illegal combination of flags
+        '404':
+          description: Organization not found
+        '422':
+          description: |
+            The organization cannot be deleted. Common causes:
+            - Ordinary deletion, and the organization owns repositories.
+            - A cascade delete for this organization is already running.
+            - `delete_storage=true` would delete user-supplied bucket data without `delete_user_supplied_storage=true`.
 
   /admin/orgs/{orgname}/teams:
     post:
